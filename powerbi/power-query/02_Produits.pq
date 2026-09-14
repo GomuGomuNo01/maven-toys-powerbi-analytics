@@ -1,0 +1,65 @@
+// Requête : Produits (dimension)
+// Grain : une ligne = un produit (35 produits)
+let
+    Source = Csv.Document(
+        File.Contents(DossierDonnees & "products.csv"),
+        [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
+    ),
+    EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+
+    // Les prix sont stockés en texte ("$15.99 ") : on retire "$" et les espaces
+    PrixNettoyes = Table.TransformColumns(
+        EntetesPromues,
+        {
+            {"Product_Cost", each Text.Trim(Text.Replace(_, "$", "")), type text},
+            {"Product_Price", each Text.Trim(Text.Replace(_, "$", "")), type text}
+        }
+    ),
+
+    // Culture "en-US" indispensable : sur un Windows français, "15.99" serait mal
+    // interprété car le séparateur décimal attendu est la virgule
+    TypesAppliques = Table.TransformColumnTypes(
+        PrixNettoyes,
+        {
+            {"Product_ID", Int64.Type},
+            {"Product_Name", type text},
+            {"Product_Category", type text},
+            {"Product_Cost", Currency.Type},
+            {"Product_Price", Currency.Type}
+        },
+        "en-US"
+    ),
+
+    // Libellés métier en français pour les destinataires du rapport
+    CategoriesTraduites = Table.TransformColumns(
+        TypesAppliques,
+        {
+            {
+                "Product_Category",
+                each Record.FieldOrDefault(
+                    [
+                        #"Art & Crafts" = "Arts créatifs",
+                        Electronics = "Électronique",
+                        Games = "Jeux",
+                        #"Sports & Outdoors" = "Sports & plein air",
+                        Toys = "Jouets"
+                    ],
+                    _,
+                    _
+                ),
+                type text
+            }
+        }
+    ),
+    ColonnesRenommees = Table.RenameColumns(
+        CategoriesTraduites,
+        {
+            {"Product_ID", "ID produit"},
+            {"Product_Name", "Produit"},
+            {"Product_Category", "Catégorie"},
+            {"Product_Cost", "Coût unitaire"},
+            {"Product_Price", "Prix unitaire"}
+        }
+    )
+in
+    ColonnesRenommees

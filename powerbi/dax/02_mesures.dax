@@ -1,0 +1,279 @@
+// =============================================================================
+// MESURES DAX : à exécuter dans la VUE REQUÊTE DAX de Power BI Desktop
+// =============================================================================
+// Mode opératoire :
+//   1. Barre latérale gauche > icône "Vue Requête DAX"
+//   2. Coller l'intégralité de ce fichier
+//   3. Cliquer sur "Exécuter" : les tableaux de contrôle en bas du script s'affichent
+//   4. Cliquer sur "Mettre à jour le modèle avec les modifications" : toutes les
+//      mesures définies ci-dessous sont ajoutées au modèle en une seule fois
+//
+// Prérequis : tables Ventes, Produits, Magasins, Stock, Calendrier et _Mesures
+// chargées, relations créées, Calendrier marqué comme table de dates, colonnes
+// calculées de Stock créées (fichier 01_colonnes_calculees_stock.dax).
+//
+// Règle de lecture : "N-1" = même période l'année précédente. Les données 2023
+// s'arrêtent au 30/09 : janv.-sept. 2023 est donc comparé à janv.-sept. 2022.
+// =============================================================================
+
+DEFINE
+
+    // -------------------------------------------------------------------------
+    // 1. VENTES ET RENTABILITÉ
+    // -------------------------------------------------------------------------
+
+    // Chiffre d'affaires : unités x prix unitaire, calculé ligne à ligne (SUMX)
+    // car le prix est dans Produits et les unités dans Ventes
+    MEASURE '_Mesures'[CA] =
+        SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Prix unitaire] ) )
+
+    MEASURE '_Mesures'[Coût des ventes] =
+        SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Coût unitaire] ) )
+
+    MEASURE '_Mesures'[Marge brute] =
+        [CA] - [Coût des ventes]
+
+    // DIVIDE évite l'erreur de division par zéro (renvoie vide)
+    MEASURE '_Mesures'[Taux de marge] =
+        DIVIDE ( [Marge brute], [CA] )
+
+    MEASURE '_Mesures'[Unités vendues] =
+        SUM ( Ventes[Unités] )
+
+    // Une ligne de la table Ventes = une vente d'un produit
+    MEASURE '_Mesures'[Nb ventes] =
+        COUNTROWS ( Ventes )
+
+    MEASURE '_Mesures'[CA moyen par vente] =
+        DIVIDE ( [CA], [Nb ventes] )
+
+    MEASURE '_Mesures'[Nb magasins actifs] =
+        DISTINCTCOUNT ( Ventes[ID magasin] )
+
+    // Permet de comparer des groupes de tailles différentes (29 magasins en
+    // centre-ville contre 3 en aéroport)
+    MEASURE '_Mesures'[CA moyen par magasin] =
+        DIVIDE ( [CA], [Nb magasins actifs] )
+
+    // Moyenne du CA quotidien sur les jours du contexte (ex. tous les vendredis)
+    MEASURE '_Mesures'[CA moyen par jour] =
+        AVERAGEX ( VALUES ( Calendrier[Date] ), [CA] )
+
+    // -------------------------------------------------------------------------
+    // 2. COMPARAISON À PÉRIODE ÉGALE (N-1)
+    // -------------------------------------------------------------------------
+    // HASONEVALUE : la comparaison n'a de sens que si une seule année est
+    // sélectionnée. Sans ce garde-fou, "toutes années" comparerait 21 mois à 9 mois.
+
+    MEASURE '_Mesures'[CA N-1] =
+        IF (
+            HASONEVALUE ( Calendrier[Année] ),
+            CALCULATE ( [CA], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+        )
+
+    MEASURE '_Mesures'[Évol. CA %] =
+        VAR _CAN1 = [CA N-1]
+        RETURN
+            IF ( NOT ISBLANK ( _CAN1 ), DIVIDE ( [CA] - _CAN1, _CAN1 ) )
+
+    MEASURE '_Mesures'[Marge brute N-1] =
+        IF (
+            HASONEVALUE ( Calendrier[Année] ),
+            CALCULATE ( [Marge brute], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+        )
+
+    MEASURE '_Mesures'[Évol. marge brute %] =
+        VAR _MargeN1 = [Marge brute N-1]
+        RETURN
+            IF ( NOT ISBLANK ( _MargeN1 ), DIVIDE ( [Marge brute] - _MargeN1, _MargeN1 ) )
+
+    // Écart en valeur, utilisé dans le graphique en cascade.
+    // On vérifie que la période N-1 existe pour l'entreprise (tous produits et
+    // magasins confondus) : un produit lancé en 2023 contribue alors pour toute
+    // sa marge, au lieu d'afficher un vide.
+    MEASURE '_Mesures'[Écart marge brute vs N-1] =
+        VAR _PeriodeN1Disponible =
+            HASONEVALUE ( Calendrier[Année] )
+                && NOT ISEMPTY (
+                    CALCULATETABLE (
+                        Ventes,
+                        SAMEPERIODLASTYEAR ( Calendrier[Date] ),
+                        REMOVEFILTERS ( Produits ),
+                        REMOVEFILTERS ( Magasins )
+                    )
+                )
+        RETURN
+            IF ( _PeriodeN1Disponible, [Marge brute] - [Marge brute N-1] )
+
+    MEASURE '_Mesures'[Taux de marge N-1] =
+        IF (
+            HASONEVALUE ( Calendrier[Année] ),
+            CALCULATE ( [Taux de marge], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+        )
+
+    // Écart exprimé en points de pourcentage (26,2 % - 29,5 % = -3,3 pts)
+    MEASURE '_Mesures'[Écart taux de marge (pts)] =
+        VAR _TauxN1 = [Taux de marge N-1]
+        RETURN
+            IF ( NOT ISBLANK ( _TauxN1 ), ( [Taux de marge] - _TauxN1 ) * 100 )
+
+    MEASURE '_Mesures'[Unités vendues N-1] =
+        IF (
+            HASONEVALUE ( Calendrier[Année] ),
+            CALCULATE ( [Unités vendues], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+        )
+
+    MEASURE '_Mesures'[Évol. unités %] =
+        VAR _UnitesN1 = [Unités vendues N-1]
+        RETURN
+            IF ( NOT ISBLANK ( _UnitesN1 ), DIVIDE ( [Unités vendues] - _UnitesN1, _UnitesN1 ) )
+
+    // -------------------------------------------------------------------------
+    // 3. LIBELLÉS ET MISE EN FORME (cartes KPI, sous-titres, couleurs)
+    // -------------------------------------------------------------------------
+
+    MEASURE '_Mesures'[Libellé évol. CA] =
+        VAR _Evol = [Évol. CA %]
+        RETURN
+            IF (
+                ISBLANK ( _Evol ),
+                "Pas de période N-1 comparable",
+                FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
+            )
+
+    MEASURE '_Mesures'[Libellé évol. marge brute] =
+        VAR _Evol = [Évol. marge brute %]
+        RETURN
+            IF (
+                ISBLANK ( _Evol ),
+                "Pas de période N-1 comparable",
+                FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
+            )
+
+    MEASURE '_Mesures'[Libellé écart taux de marge] =
+        VAR _Ecart = [Écart taux de marge (pts)]
+        RETURN
+            IF (
+                ISBLANK ( _Ecart ),
+                "Pas de période N-1 comparable",
+                FORMAT ( _Ecart, "+0.0;-0.0" ) & " pts vs N-1"
+            )
+
+    MEASURE '_Mesures'[Libellé évol. unités] =
+        VAR _Evol = [Évol. unités %]
+        RETURN
+            IF (
+                ISBLANK ( _Evol ),
+                "Pas de période N-1 comparable",
+                FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
+            )
+
+    // Couleur utilisée en mise en forme conditionnelle ("Valeur du champ")
+    MEASURE '_Mesures'[Couleur évol. CA] =
+        SWITCH (
+            TRUE (),
+            ISBLANK ( [Évol. CA %] ), "#898781",
+            [Évol. CA %] < 0, "#D03B3B",
+            "#006300"
+        )
+
+    MEASURE '_Mesures'[Période analysée] =
+        VAR _Debut = MIN ( Calendrier[Date] )
+        VAR _Fin = MAX ( Calendrier[Date] )
+        RETURN
+            "Période : " & FORMAT ( _Debut, "dd/mm/yyyy" ) & " au " & FORMAT ( _Fin, "dd/mm/yyyy" )
+
+    // -------------------------------------------------------------------------
+    // 4. STOCK ET RISQUE DE RUPTURE (photo au 30/09/2023)
+    // -------------------------------------------------------------------------
+    // La table Stock n'est pas reliée au calendrier : ces mesures ignorent les
+    // filtres de date. Elles réagissent aux filtres Produits et Magasins.
+
+    MEASURE '_Mesures'[Date de référence stock] =
+        CALCULATE ( MAX ( Ventes[Date] ), REMOVEFILTERS () )
+
+    MEASURE '_Mesures'[Stock disponible (unités)] =
+        SUM ( Stock[Stock disponible] )
+
+    // Valorisation au coût d'achat : c'est l'argent immobilisé en stock
+    MEASURE '_Mesures'[Valeur du stock] =
+        SUMX ( Stock, Stock[Stock disponible] * RELATED ( Produits[Coût unitaire] ) )
+
+    MEASURE '_Mesures'[Nb références] =
+        COUNTROWS ( Stock )
+
+    MEASURE '_Mesures'[Nb ruptures] =
+        CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Rupture" ) + 0
+
+    MEASURE '_Mesures'[Nb références critiques] =
+        CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Critique (< 7 j)" ) + 0
+
+    MEASURE '_Mesures'[% références en rupture] =
+        DIVIDE ( [Nb ruptures], [Nb références] )
+
+    // Couverture agrégée : stock total / demande journalière totale du périmètre
+    MEASURE '_Mesures'[Couverture moyenne (jours)] =
+        DIVIDE ( [Stock disponible (unités)], SUM ( Stock[Ventes moy. par jour] ) )
+
+    // Estimation : ce que les références en rupture auraient vendu chaque jour
+    // si elles avaient été disponibles, au rythme des 90 derniers jours
+    MEASURE '_Mesures'[CA potentiel perdu par jour] =
+        SUMX (
+            FILTER ( Stock, Stock[Statut stock] = "Rupture" ),
+            Stock[Ventes moy. par jour] * RELATED ( Produits[Prix unitaire] )
+        ) + 0
+
+    MEASURE '_Mesures'[CA potentiel perdu sur 30 j] =
+        [CA potentiel perdu par jour] * 30
+
+    // Capital immobilisé dans des produits qui tournent trop lentement
+    MEASURE '_Mesures'[Valeur stock immobilisé] =
+        CALCULATE (
+            [Valeur du stock],
+            Stock[Statut stock] IN { "Surstock (> 90 j)", "Stock dormant" }
+        ) + 0
+
+    MEASURE '_Mesures'[% stock immobilisé] =
+        DIVIDE ( [Valeur stock immobilisé], [Valeur du stock] )
+
+
+// =============================================================================
+// CONTRÔLES : comparer ces résultats aux valeurs de analysis/audit_donnees.py
+// =============================================================================
+
+// Contrôle 1 : indicateurs globaux par année
+// Attendu 2023 : CA 6 962 074,27 | CA N-1 5 320 115,85 | Évol. +30,9 % | Écart taux -3,3 pts
+EVALUATE
+SUMMARIZECOLUMNS (
+    Calendrier[Année],
+    "CA", [CA],
+    "CA N-1", [CA N-1],
+    "Évol. CA %", [Évol. CA %],
+    "Marge brute", [Marge brute],
+    "Évol. marge brute %", [Évol. marge brute %],
+    "Taux de marge", [Taux de marge],
+    "Écart taux de marge (pts)", [Écart taux de marge (pts)],
+    "Unités vendues", [Unités vendues]
+)
+
+// Contrôle 2 : contribution des catégories à l'écart de marge en 2023
+// Attendu : Électronique -210 260 | Arts créatifs +335 745
+EVALUATE
+SUMMARIZECOLUMNS (
+    Produits[Catégorie],
+    TREATAS ( { 2023 }, Calendrier[Année] ),
+    "CA", [CA],
+    "Évol. CA %", [Évol. CA %],
+    "Écart marge brute vs N-1", [Écart marge brute vs N-1],
+    "Taux de marge", [Taux de marge]
+)
+
+// Contrôle 3 : répartition des statuts de stock
+// Attendu : Rupture 77 | Critique 289 | Normal 1 018 | Surstock 116 | Dormant 93
+EVALUATE
+SUMMARIZECOLUMNS (
+    Stock[Statut stock],
+    "Nb références", [Nb références],
+    "Valeur du stock", [Valeur du stock],
+    "CA potentiel perdu par jour", [CA potentiel perdu par jour]
+)

@@ -1,0 +1,21 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Power BI : fichiers temporaires et caches locaux
+~$*.pbix
+*.pbix.bak
+.pbi/
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Système
+Thumbs.db
+desktop.ini
+.DS_Store

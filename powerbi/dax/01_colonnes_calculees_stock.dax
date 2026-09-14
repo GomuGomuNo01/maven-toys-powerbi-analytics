@@ -1,0 +1,70 @@
+// =============================================================================
+// COLONNES CALCULÉES : table Stock
+// =============================================================================
+// À créer une par une : vue Table > sélectionner la table Stock >
+// Outils de table > Nouvelle colonne > coller la formule > Entrée.
+//
+// Pourquoi des colonnes calculées et non des mesures ?
+// Le stock est une photo figée (une ligne = un produit dans un magasin). Le statut
+// d'une ligne ne dépend d'aucun filtre utilisateur : il est calculé une fois au
+// chargement, puis utilisable comme axe, légende ou segment (impossible avec une mesure).
+//
+// Ordre de création obligatoire : chaque colonne utilise la précédente.
+// =============================================================================
+
+
+// 1) Unités vendues sur les 90 derniers jours pour ce couple magasin x produit
+Ventes 90 j =
+VAR _Magasin = Stock[ID magasin]
+VAR _Produit = Stock[ID produit]
+VAR _DateReference = MAX ( Ventes[Date] )  // 30/09/2023, dernière date disponible
+RETURN
+    CALCULATE (
+        SUM ( Ventes[Unités] ),
+        Ventes[ID magasin] = _Magasin,
+        Ventes[ID produit] = _Produit,
+        Ventes[Date] > _DateReference - 90
+    ) + 0  // "+ 0" remplace un vide par 0 : aucune vente = demande nulle
+
+
+// 2) Demande moyenne journalière récente
+Ventes moy. par jour =
+DIVIDE ( Stock[Ventes 90 j], 90 )
+
+
+// 3) Nombre de jours avant épuisement du stock au rythme de vente actuel
+//    (vide si le produit ne se vend plus : la couverture est alors infinie)
+Couverture (jours) =
+DIVIDE ( Stock[Stock disponible], Stock[Ventes moy. par jour] )
+
+
+// 4) Code de statut, calculé à partir des valeurs de base.
+//    Sert aussi à trier les statuts dans un ordre logique (et non alphabétique).
+Ordre statut =
+VAR _Stock = Stock[Stock disponible]
+VAR _Demande = Stock[Ventes moy. par jour]
+VAR _Couverture = Stock[Couverture (jours)]
+RETURN
+    SWITCH (
+        TRUE (),
+        _Stock = 0 && _Demande > 0, 1,  // Rupture : demande existante, rien en rayon
+        _Stock = 0, 6,                  // Inactif : ni stock ni vente
+        _Demande = 0, 5,                // Stock dormant : du stock mais plus aucune vente
+        _Couverture < 7, 2,             // Critique : épuisement en moins d'une semaine
+        _Couverture <= 90, 3,           // Normal
+        4                               // Surstock : plus d'un trimestre de ventes en stock
+    )
+
+
+// 5) Libellé du statut, affiché dans le rapport
+//    Ensuite : sélectionner la colonne > Outils de colonne > Trier par colonne > Ordre statut
+Statut stock =
+SWITCH (
+    Stock[Ordre statut],
+    1, "Rupture",
+    2, "Critique (< 7 j)",
+    3, "Normal (7 à 90 j)",
+    4, "Surstock (> 90 j)",
+    5, "Stock dormant",
+    6, "Inactif"
+)

@@ -1,0 +1,34 @@
+// Requête : Calendrier (dimension de dates)
+// Grain : une ligne = un jour, du 01/01/2022 au 30/09/2023, sans trou
+// Une table de dates dédiée est indispensable aux fonctions de comparaison
+// temporelle DAX (ex. SAMEPERIODLASTYEAR).
+let
+    Source = Csv.Document(
+        File.Contents(DossierDonnees & "calendar.csv"),
+        [Delimiter = ",", Columns = 1, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
+    ),
+    EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+
+    // Format source "1/31/2022" (mois/jour/année) : la culture "en-US" est obligatoire,
+    // sinon Windows en français lit "jour/mois" et produit des erreurs ou des dates fausses
+    TypeDate = Table.TransformColumnTypes(EntetesPromues, {{"Date", type date}}, "en-US"),
+
+    AjoutAnnee = Table.AddColumn(TypeDate, "Année", each Date.Year([Date]), Int64.Type),
+    AjoutNumMois = Table.AddColumn(AjoutAnnee, "N° mois", each Date.Month([Date]), Int64.Type),
+    AjoutMois = Table.AddColumn(
+        AjoutNumMois, "Mois", each Text.Proper(Date.ToText([Date], [Format = "MMM", Culture = "fr-FR"])), type text
+    ),
+    AjoutTrimestre = Table.AddColumn(AjoutMois, "Trimestre", each "T" & Text.From(Date.QuarterOfYear([Date])), type text),
+    AjoutCleMois = Table.AddColumn(AjoutTrimestre, "Clé année-mois", each [Année] * 100 + [N° mois], Int64.Type),
+    AjoutMoisAnnee = Table.AddColumn(
+        AjoutCleMois, "Mois-année", each [Mois] & " " & Text.From([Année]), type text
+    ),
+    // Lundi = 1 ... Dimanche = 7 (convention française)
+    AjoutNumJour = Table.AddColumn(
+        AjoutMoisAnnee, "N° jour semaine", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type
+    ),
+    AjoutJour = Table.AddColumn(
+        AjoutNumJour, "Jour semaine", each Text.Proper(Date.DayOfWeekName([Date], "fr-FR")), type text
+    )
+in
+    AjoutJour
