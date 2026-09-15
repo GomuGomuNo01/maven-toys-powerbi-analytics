@@ -10,194 +10,287 @@
     "tabOrder": 16
   },
   "visual": {
-    "visualType": "textbox",
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Constats"
+                    }
+                  },
+                  "Property": "Thème"
+                }
+              },
+              "queryRef": "Constats.Thème",
+              "nativeQueryRef": "Thème"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Mesures"
+                    }
+                  },
+                  "Property": "Constat"
+                }
+              },
+              "queryRef": "_Mesures.Constat",
+              "nativeQueryRef": "Constat"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Constats"
+                  }
+                },
+                "Property": "Thème"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
     "objects": {
-      "general": [
+      "columnHeaders": [
         {
           "properties": {
-            "paragraphs": [
-              {
-                "textRuns": [
-                  {
-                    "value": "À retenir (janv.-sept. 2023 vs 2022)",
-                    "textStyle": {
-                      "fontSize": "12pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0B0B0B'"
                     }
                   }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "1. Croissance moins rentable : ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": "CA ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  },
-                  {
-                    "value": "+30,9 %",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": " mais marge brute ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  },
-                  {
-                    "value": "+16,0 %",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": " seulement.",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "2. Effet mix : ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": "Arts créatifs triple son CA avec des produits peu margés (Magic Sand : ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  },
-                  {
-                    "value": "12,5 %",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": " de marge).",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "3. Électronique : ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": "Colorbuds, produit le plus rentable, perd ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  },
-                  {
-                    "value": "264 k$",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": " de marge (volumes -60 % en 18 mois, sans rupture).",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "Priorité : ",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#0B0B0B",
-                      "fontWeight": "bold"
-                    }
-                  },
-                  {
-                    "value": "protéger la marge et relancer l'électronique avant le pic de décembre.",
-                    "textStyle": {
-                      "fontSize": "10.5pt",
-                      "color": "#52514E"
-                    }
-                  }
-                ]
+                }
               }
-            ]
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#F4F4F1'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "fontColorPrimary": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0B0B0B'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontColorSecondary": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0B0B0B'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            },
+            "gridHorizontal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "gridHorizontalColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E1E0D9'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "200D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Constats.Thème"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "390D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Mesures.Constat"
           }
         }
       ]
     },
     "visualContainerObjects": {
-      "padding": [
+      "title": [
         {
           "properties": {
-            "top": {
+            "show": {
               "expr": {
                 "Literal": {
-                  "Value": "14D"
+                  "Value": "true"
                 }
               }
             },
-            "left": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "18D"
+                  "Value": "'À retenir sur la période sélectionnée'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             },
-            "right": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "18D"
+                  "Value": "'Constats calculés automatiquement à partir des filtres'"
                 }
               }
             },
-            "bottom": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#52514E'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tableau des constats clés calculés pour la sélection en cours'"
                 }
               }
             }

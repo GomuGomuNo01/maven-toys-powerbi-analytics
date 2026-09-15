@@ -2,9 +2,10 @@
 
 ![Power BI](https://img.shields.io/badge/Power%20BI-Desktop-F2C811?logo=powerbi&logoColor=black)
 ![Format](https://img.shields.io/badge/Format-PBIP%20(TMDL%20%2B%20PBIR)-6D597A)
-![DAX](https://img.shields.io/badge/DAX-62%20mesures-2A78D6)
+![DAX](https://img.shields.io/badge/DAX-67%20mesures-2A78D6)
 ![Power Query](https://img.shields.io/badge/Power%20Query-M-1BAF7A)
 ![Python](https://img.shields.io/badge/Python-pandas-3776AB?logo=python&logoColor=white)
+![Licence](https://img.shields.io/badge/Licence-MIT-0B0B0B)
 
 Analyse de 829 262 ventes d'une enseigne de 50 magasins de jouets pour répondre à une question de direction : **la croissance est-elle rentable, et où agir en priorité avant la fin d'année ?**
 
@@ -113,7 +114,7 @@ flowchart LR
 | 2. Audit qualité | Script Python : complétude, doublons, intégrité, formats, périmètre | Ne pas bâtir d'indicateurs sur des données mal comprises |
 | 3. Préparation | Nettoyage des prix, culture `en-US`, correction de la ville, traduction des libellés, suppression d'une colonne inutile, paramètre de chemin | Rendre le traitement fiable, reproductible et portable |
 | 4. Modélisation | Schéma en étoile à deux tables de faits, relations à sens unique, table de dates marquée | Des filtres prévisibles et des calculs N-1 corrects |
-| 5. Mesures DAX | 62 mesures et 5 colonnes calculées, réconciliées avec le script Python | Garantir la justesse des chiffres avant publication |
+| 5. Mesures DAX | 67 mesures et 5 colonnes calculées, réconciliées avec le script Python | Garantir la justesse des chiffres avant publication |
 | 6. Rapport | 4 pages orientées questions, 49 visuels, thème accessible, navigation | Rendre l'analyse lisible par un public non technique |
 | 7. Analyse | Enseignements, recommandations priorisées, limites | Transformer les chiffres en décisions |
 
@@ -310,12 +311,13 @@ maven-toys-powerbi-analytics/
 │   ├── power-query/                       Requêtes M commentées
 │   ├── dax/                               Colonnes calculées et mesures commentées
 │   └── theme/                             Thème Power BI (JSON)
-└── docs/
-    ├── 01_cadrage_besoin.md
-    ├── 02_qualite_donnees.md
-    ├── 03_guide_power_bi.md
-    ├── 04_resultats_recommandations.md
-    └── images/                            Captures du rapport
+├── docs/
+│   ├── 01_cadrage_besoin.md
+│   ├── 02_qualite_donnees.md
+│   ├── 03_guide_power_bi.md
+│   ├── 04_resultats_recommandations.md
+│   └── images/                            Captures du rapport
+└── LICENSE                                Licence MIT
 ```
 
 **Reproduire l'analyse**
@@ -332,11 +334,13 @@ python analysis/audit_donnees.py
 ```
 
 3. Ouvrir `powerbi/MavenToys_Pilotage.pbip` dans Power BI Desktop (version de juillet 2026 ou plus récente).
-4. **Accueil > Transformer les données > Modifier les paramètres** : indiquer le chemin local du dossier `data/raw/` (terminé par `\`).
-5. Cliquer sur **Actualiser maintenant**. Dans Power BI Desktop, les boutons de navigation du rapport s'utilisent avec **Ctrl + clic**.
+4. Cliquer sur **Actualiser maintenant** : les données sont lues directement depuis ce dépôt GitHub, aucun chemin à configurer (si Power BI le demande, choisir l'accès **Anonyme**).
+5. Hors connexion : **Accueil > Transformer les données > Modifier les paramètres**, remplacer `DossierDonnees` par le chemin local du dossier `data/raw/` (terminé par `\`), puis actualiser. Dans Power BI Desktop, les boutons de navigation du rapport s'utilisent avec **Ctrl + clic**.
 
 ---
 
-**Auteur** : GomuGomuNo01 · [GitHub](https://github.com/GomuGomuNo01)
+**Auteur** : Dibie Elisee Jules Cedric KOUADIO ([@GomuGomuNo01](https://github.com/GomuGomuNo01))
 
-*Projet réalisé dans le cadre de ma formation au métier de Data Analyst, à partir du jeu de données Maven Toys de Maven Analytics.*
+**Données** : jeu de données **Mexico Toy Sales** publié par [Maven Analytics](https://mavenanalytics.io/data-playground) (données fictives, mises à disposition à des fins pédagogiques). Les données restent la propriété de leur éditeur.
+
+**Licence** : code, modèle Power BI et documentation sous licence [MIT](LICENSE).

@@ -50,6 +50,24 @@
             }
           ]
         },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Mesures"
+                    }
+                  },
+                  "Property": "Couverture moyenne (jours)"
+                }
+              },
+              "queryRef": "_Mesures.Couverture moyenne (jours)",
+              "nativeQueryRef": "Couverture moyenne (jours)"
+            }
+          ]
+        },
         "Y": {
           "projections": [
             {

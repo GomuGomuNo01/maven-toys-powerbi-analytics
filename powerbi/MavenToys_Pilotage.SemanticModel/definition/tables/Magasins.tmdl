@@ -46,8 +46,13 @@ table Magasins
 				// Requête : Magasins (dimension)
 				// Grain : une ligne = un magasin (50 magasins)
 				let
+				    // Lecture depuis GitHub (par défaut, fonctionne sur tout poste) ou depuis un dossier local
+				    Contenu =
+				        if Text.StartsWith(DossierDonnees, "http")
+				        then Web.Contents(DossierDonnees & "stores.csv")
+				        else File.Contents(DossierDonnees & "stores.csv"),
 				    Source = Csv.Document(
-				        File.Contents(DossierDonnees & "stores.csv"),
+				        Contenu,
 				        [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
 				    ),
 				    EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),

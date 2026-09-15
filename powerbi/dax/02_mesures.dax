@@ -272,6 +272,17 @@ DEFINE
             "#B7D3F6"
         )
 
+    // Constat de la ligne en cours dans le tableau « À retenir »
+    MEASURE '_Mesures'[Constat] =
+        SWITCH (
+            SELECTEDVALUE ( Constats[Ordre] ),
+            1, [Constat croissance],
+            2, [Constat taux de marge],
+            3, [Constat meilleure catégorie],
+            4, [Constat pire catégorie],
+            5, [Constat produit à surveiller]
+        )
+
     // Couleur du texte de statut dans la liste des références à traiter
     MEASURE '_Mesures'[Couleur statut stock] =
         SWITCH (
@@ -281,11 +292,65 @@ DEFINE
             "#52514E"
         )
 
-    MEASURE '_Mesures'[Période analysée] =
-        VAR _Debut = MIN ( Calendrier[Date] )
-        VAR _Fin = MAX ( Calendrier[Date] )
+    // Constats dynamiques du bloc « À retenir » : phrases calculées à partir des
+    // mesures, donc toujours justes quelle que soit la sélection (année, catégorie, emplacement).
+    // Affichées dans un tableau : une ligne par thème de la table Constats (03_table_constats.dax).
+    MEASURE '_Mesures'[Constat croissance] =
+        IF (
+            ISBLANK ( [Évol. CA %] ),
+            "Pas de période N-1 comparable pour cette sélection",
+            "CA " & FORMAT ( [Évol. CA %], "+0.0 %;-0.0 %" )
+                & ", marge brute " & FORMAT ( [Évol. marge brute %], "+0.0 %;-0.0 %" )
+                & ", taux de marge " & FORMAT ( [Écart taux de marge (pts)], "+0.0;-0.0" ) & " pts"
+        )
+
+    MEASURE '_Mesures'[Constat taux de marge] =
+        VAR _Categories = VALUES ( Produits[Catégorie] )
+        VAR _EnRecul = COUNTROWS ( FILTER ( _Categories, [Écart taux de marge (pts)] < 0 ) ) + 0
         RETURN
-            "Période : " & FORMAT ( _Debut, "dd/mm/yyyy" ) & " au " & FORMAT ( _Fin, "dd/mm/yyyy" )
+            IF (
+                ISBLANK ( [Évol. CA %] ),
+                BLANK (),
+                "En recul dans " & _EnRecul & " catégorie(s) sur " & COUNTROWS ( _Categories )
+            )
+
+    MEASURE '_Mesures'[Constat meilleure catégorie] =
+        VAR _Classement = ADDCOLUMNS ( VALUES ( Produits[Catégorie] ), "@Ecart", [Écart marge brute vs N-1] )
+        VAR _Meilleure = TOPN ( 1, _Classement, [@Ecart], DESC )
+        VAR _Valeur = MAXX ( _Meilleure, [@Ecart] )
+        RETURN
+            IF (
+                ISBLANK ( _Valeur ),
+                BLANK (),
+                MAXX ( _Meilleure, Produits[Catégorie] )
+                    & " (" & FORMAT ( _Valeur / 1000, "+#,0;-#,0" ) & " k$)"
+            )
+
+    MEASURE '_Mesures'[Constat pire catégorie] =
+        VAR _Classement = ADDCOLUMNS ( VALUES ( Produits[Catégorie] ), "@Ecart", [Écart marge brute vs N-1] )
+        VAR _Pire = TOPN ( 1, _Classement, [@Ecart], ASC )
+        VAR _Valeur = MAXX ( _Pire, [@Ecart] )
+        RETURN
+            SWITCH (
+                TRUE (),
+                ISBLANK ( _Valeur ), BLANK (),
+                _Valeur >= 0, "Aucune catégorie ne fait reculer la marge",
+                MAXX ( _Pire, Produits[Catégorie] )
+                    & " (" & FORMAT ( _Valeur / 1000, "+#,0;-#,0" ) & " k$)"
+            )
+
+    MEASURE '_Mesures'[Constat produit à surveiller] =
+        VAR _Classement = ADDCOLUMNS ( VALUES ( Produits[Produit] ), "@Ecart", [Écart marge brute vs N-1] )
+        VAR _Pire = TOPN ( 1, _Classement, [@Ecart], ASC )
+        VAR _Valeur = MAXX ( _Pire, [@Ecart] )
+        RETURN
+            SWITCH (
+                TRUE (),
+                ISBLANK ( _Valeur ), BLANK (),
+                _Valeur >= 0, "Aucun produit en recul de marge",
+                MAXX ( _Pire, Produits[Produit] )
+                    & " (" & FORMAT ( _Valeur / 1000, "+#,0;-#,0" ) & " k$ de marge)"
+            )
 
     // -------------------------------------------------------------------------
     // 4. STOCK ET RISQUE DE RUPTURE (photo au 30/09/2023)

@@ -1,0 +1,35 @@
+table Constats
+
+	column Ordre
+		dataType: int64
+		formatString: 0
+		isHidden
+		isNameInferred
+		summarizeBy: none
+		sourceColumn: [Ordre]
+
+		annotation SummarizationSetBy = User
+
+	column 'Thème'
+		dataType: string
+		isNameInferred
+		summarizeBy: none
+		sourceColumn: [Thème]
+		sortByColumn: Ordre
+
+		annotation SummarizationSetBy = User
+
+	partition Constats = calculated
+		mode: import
+		source =
+				DATATABLE (
+				    "Ordre", INTEGER,
+				    "Thème", STRING,
+				    {
+				        { 1, "Croissance vs N-1" },
+				        { 2, "Taux de marge" },
+				        { 3, "Plus forte hausse de marge" },
+				        { 4, "Plus forte baisse de marge" },
+				        { 5, "Produit à surveiller" }
+				    }
+				)

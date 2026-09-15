@@ -1,8 +1,13 @@
 // Requête : Produits (dimension)
 // Grain : une ligne = un produit (35 produits)
 let
+    // Lecture depuis GitHub (par défaut, fonctionne sur tout poste) ou depuis un dossier local
+    Contenu =
+        if Text.StartsWith(DossierDonnees, "http")
+        then Web.Contents(DossierDonnees & "products.csv")
+        else File.Contents(DossierDonnees & "products.csv"),
     Source = Csv.Document(
-        File.Contents(DossierDonnees & "products.csv"),
+        Contenu,
         [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
     ),
     EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),

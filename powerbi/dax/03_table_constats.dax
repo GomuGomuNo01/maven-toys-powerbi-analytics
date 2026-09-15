@@ -1,0 +1,25 @@
+// =============================================================================
+// TABLE CALCULÉE : Constats
+// =============================================================================
+// À créer via : Modélisation > Nouvelle table > coller la formule.
+//
+// Pourquoi une table dédiée ? Le bloc « À retenir » est un tableau à 5 lignes.
+// Chaque ligne (thème) affiche la mesure [Constat], qui renvoie la phrase
+// correspondante calculée pour la sélection en cours. La table n'a aucune
+// relation : elle sert uniquement de liste de thèmes.
+//
+// Ensuite : colonne Thème > Trier par colonne > Ordre, puis masquer Ordre.
+// =============================================================================
+
+Constats =
+DATATABLE (
+    "Ordre", INTEGER,
+    "Thème", STRING,
+    {
+        { 1, "Croissance vs N-1" },
+        { 2, "Taux de marge" },
+        { 3, "Plus forte hausse de marge" },
+        { 4, "Plus forte baisse de marge" },
+        { 5, "Produit à surveiller" }
+    }
+)

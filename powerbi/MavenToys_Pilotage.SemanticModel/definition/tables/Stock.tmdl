@@ -104,8 +104,13 @@ table Stock
 				// Attention : pas de date dans cette table. Ce n'est pas un historique mais un état
 				// instantané. Elle ne sera donc PAS reliée au calendrier.
 				let
+				    // Lecture depuis GitHub (par défaut, fonctionne sur tout poste) ou depuis un dossier local
+				    Contenu =
+				        if Text.StartsWith(DossierDonnees, "http")
+				        then Web.Contents(DossierDonnees & "inventory.csv")
+				        else File.Contents(DossierDonnees & "inventory.csv"),
 				    Source = Csv.Document(
-				        File.Contents(DossierDonnees & "inventory.csv"),
+				        Contenu,
 				        [Delimiter = ",", Columns = 3, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
 				    ),
 				    EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),

@@ -133,6 +133,20 @@
                   "Value": "0L"
                 }
               }
+            },
+            "axisScale": {
+              "expr": {
+                "Literal": {
+                  "Value": "'log'"
+                }
+              }
+            },
+            "start": {
+              "expr": {
+                "Literal": {
+                  "Value": "10000D"
+                }
+              }
             }
           }
         }
@@ -253,7 +267,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Chaque point est un produit : CA (horizontal) et taux de marge (vertical)'"
+                  "Value": "'Chaque point est un produit : CA en échelle logarithmique (horizontal) et taux de marge (vertical)'"
                 }
               }
             },

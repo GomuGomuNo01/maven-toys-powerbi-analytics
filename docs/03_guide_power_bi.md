@@ -11,7 +11,7 @@ Le rapport terminé est fourni au format **projet Power BI (PBIP)** : [`powerbi/
 
 | Dossier | Contenu | Format |
 |---|---|---|
-| `MavenToys_Pilotage.SemanticModel/` | Modèle : tables, requêtes M, relations, 62 mesures, colonnes calculées | TMDL (texte) |
+| `MavenToys_Pilotage.SemanticModel/` | Modèle : tables, requêtes M, relations, 67 mesures, colonnes calculées | TMDL (texte) |
 | `MavenToys_Pilotage.Report/` | Rapport : 4 pages, 49 visuels, thème | PBIR (JSON) |
 
 **Pourquoi PBIP plutôt que `.pbix` ?** Un `.pbix` est un fichier binaire : Git ne voit pas ce qui a changé. Avec PBIP, chaque mesure et chaque visuel est un fichier texte : on peut relire une modification, la commenter ou revenir en arrière, comme pour du code. C'est le format recommandé par Microsoft pour travailler en équipe.
@@ -19,8 +19,8 @@ Le rapport terminé est fourni au format **projet Power BI (PBIP)** : [`powerbi/
 **Ouvrir le rapport fourni**
 
 1. Double-cliquer sur `powerbi/MavenToys_Pilotage.pbip`.
-2. **Accueil > Transformer les données > Modifier les paramètres** : indiquer le chemin local de `data\raw\` (terminé par `\`).
-3. Cliquer sur **Actualiser maintenant** dans le bandeau jaune (les données ne sont pas stockées dans le dépôt).
+2. Cliquer sur **Actualiser maintenant** dans le bandeau jaune. Le paramètre `DossierDonnees` pointe par défaut vers le dossier `data/raw` de ce dépôt GitHub : aucun chemin à configurer (si Power BI le demande, choisir l'accès **Anonyme**).
+3. Hors connexion : **Accueil > Transformer les données > Modifier les paramètres**, remplacer `DossierDonnees` par le chemin local de `data\raw\` (terminé par `\`), puis actualiser.
 
 **Utiliser ce guide** pour comprendre chaque choix, ou pour reconstruire le rapport vous-même dans un fichier d'entraînement : c'est le meilleur moyen de pouvoir l'expliquer en entretien.
 
@@ -223,7 +223,7 @@ Le statut d'une référence ne dépend d'aucun filtre et doit servir de **légen
 1. Icône **Vue Requête DAX** (DAX query view) dans la barre de gauche.
 2. Coller le contenu de [`powerbi/dax/02_mesures.dax`](../powerbi/dax/02_mesures.dax).
 3. **Exécuter** : trois tableaux de contrôle s'affichent dans les résultats.
-4. **Mettre à jour le modèle avec les modifications** (Update model with changes) : les 62 mesures sont ajoutées à `_Mesures`.
+4. **Mettre à jour le modèle avec les modifications** (Update model with changes) : les 67 mesures sont ajoutées à `_Mesures`.
 
 **Pourquoi la vue Requête DAX ?** Elle permet de tester des mesures **avant** de les ajouter au modèle, puis de toutes les créer d'un clic. C'est aussi l'outil de débogage d'un analyste.
 
@@ -434,7 +434,7 @@ Cas limites testés :
 | Catégorie **Électronique** filtrée (page Synthèse, dans l'interface) | CA 806 312 $ (-27,8 %) en rouge, titres neutres (« CA mensuel : N vs N-1 ») | ✅ |
 | Top 10 des baisses de marge | Jenga (11e, -1 309 $) est exclu, Dinosaur Figures (10e) inclus | ✅ |
 | Magic Sand dans le détail produits | Évolution masquée (base N-1 de 3 486 $ pour 868 849 $ de CA) | ✅ |
-| 62 mesures évaluées dans 5 contextes de filtre | Aucune erreur DAX | ✅ |
+| 67 mesures évaluées dans 5 contextes de filtre | Aucune erreur DAX | ✅ |
 | 4 pages affichées | Aucun message d'erreur de visuel | ✅ |
 
 Les contrôles Power BI ont été exécutés par requêtes DAX sur le modèle chargé (mêmes requêtes qu'en bas de `02_mesures.dax`), complétés par des tests de filtres dans l'interface. Au total, **19 indicateurs** ont été comparés automatiquement au calcul Python : 19 identiques.

@@ -44,8 +44,13 @@ table Ventes
 				// Requête : Ventes (table de faits)
 				// Grain : une ligne = un produit vendu dans un magasin à une date donnée
 				let
+				    // Lecture depuis GitHub (par défaut, fonctionne sur tout poste) ou depuis un dossier local
+				    Contenu =
+				        if Text.StartsWith(DossierDonnees, "http")
+				        then Web.Contents(DossierDonnees & "sales.csv")
+				        else File.Contents(DossierDonnees & "sales.csv"),
 				    Source = Csv.Document(
-				        File.Contents(DossierDonnees & "sales.csv"),
+				        Contenu,
 				        [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
 				    ),
 				    EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),

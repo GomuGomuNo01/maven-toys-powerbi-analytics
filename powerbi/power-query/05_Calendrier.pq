@@ -3,8 +3,13 @@
 // Une table de dates dédiée est indispensable aux fonctions de comparaison
 // temporelle DAX (ex. SAMEPERIODLASTYEAR).
 let
+    // Lecture depuis GitHub (par défaut, fonctionne sur tout poste) ou depuis un dossier local
+    Contenu =
+        if Text.StartsWith(DossierDonnees, "http")
+        then Web.Contents(DossierDonnees & "calendar.csv")
+        else File.Contents(DossierDonnees & "calendar.csv"),
     Source = Csv.Document(
-        File.Contents(DossierDonnees & "calendar.csv"),
+        Contenu,
         [Delimiter = ",", Columns = 1, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
     ),
     EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
