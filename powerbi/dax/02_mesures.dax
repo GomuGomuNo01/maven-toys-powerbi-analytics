@@ -10,7 +10,8 @@
 //
 // Prérequis : tables Ventes, Produits, Magasins, Stock, Calendrier et _Mesures
 // chargées, relations créées, Calendrier marqué comme table de dates, colonnes
-// calculées de Stock créées (fichier 01_colonnes_calculees_stock.dax).
+// calculées de Stock créées (fichier 01_colonnes_calculees_stock.dax) et table
+// calculée Constats créée (fichier 03_table_constats.dax).
 //
 // Règle de lecture : "N-1" = même période l'année précédente. Les données 2023
 // s'arrêtent au 30/09 : janv.-sept. 2023 est donc comparé à janv.-sept. 2022.
@@ -319,9 +320,10 @@ DEFINE
         VAR _Meilleure = TOPN ( 1, _Classement, [@Ecart], DESC )
         VAR _Valeur = MAXX ( _Meilleure, [@Ecart] )
         RETURN
-            IF (
-                ISBLANK ( _Valeur ),
-                BLANK (),
+            SWITCH (
+                TRUE (),
+                ISBLANK ( _Valeur ), BLANK (),
+                _Valeur <= 0, "Aucune catégorie en hausse de marge",
                 MAXX ( _Meilleure, Produits[Catégorie] )
                     & " (" & FORMAT ( _Valeur / 1000, "+#,0;-#,0" ) & " k$)"
             )

@@ -1,9 +1,11 @@
 table Produits
+	lineageTag: f6656634-389f-47c6-81f6-50d35cc4d85a
 
 	column 'ID produit'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: 84f244b1-df1f-400c-8b18-ff925513a1aa
 		summarizeBy: none
 		sourceColumn: ID produit
 
@@ -11,13 +13,15 @@ table Produits
 
 	column Produit
 		dataType: string
+		lineageTag: 3d27683e-3050-4b6b-9862-8eaa1ac58323
 		summarizeBy: none
 		sourceColumn: Produit
 
 		annotation SummarizationSetBy = User
 
-	column 'Catégorie'
+	column Catégorie
 		dataType: string
+		lineageTag: 268a7813-2492-4fad-9772-3b1285282361
 		summarizeBy: none
 		sourceColumn: Catégorie
 
@@ -26,6 +30,7 @@ table Produits
 	column 'Coût unitaire'
 		dataType: decimal
 		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
+		lineageTag: 2587d5a0-e9bb-43e7-9298-69f366948066
 		summarizeBy: none
 		sourceColumn: Coût unitaire
 
@@ -34,6 +39,7 @@ table Produits
 	column 'Prix unitaire'
 		dataType: decimal
 		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
+		lineageTag: c0072d7a-b47c-402a-88ef-3f9c2d1ae82a
 		summarizeBy: none
 		sourceColumn: Prix unitaire
 
@@ -111,3 +117,4 @@ table Produits
 				    ColonnesRenommees
 
 	annotation PBI_ResultType = Table
+

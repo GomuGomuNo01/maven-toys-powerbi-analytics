@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "kpi_immobilise_valeur",
   "position": {
-    "x": 961.0,
+    "x": 961,
     "y": 78,
     "z": 11,
     "height": 78,
-    "width": 303.0,
+    "width": 303,
     "tabOrder": 11
   },
   "visual": {

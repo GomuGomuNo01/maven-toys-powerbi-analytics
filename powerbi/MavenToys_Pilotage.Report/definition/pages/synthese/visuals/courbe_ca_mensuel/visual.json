@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "courbe_ca_mensuel",
   "position": {
     "x": 16,
@@ -29,6 +29,38 @@
               "queryRef": "Calendrier.Mois",
               "nativeQueryRef": "Mois",
               "active": true
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Mesures"
+                    }
+                  },
+                  "Property": "Nb ventes"
+                }
+              },
+              "queryRef": "_Mesures.Nb ventes",
+              "nativeQueryRef": "Nb ventes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Mesures"
+                    }
+                  },
+                  "Property": "CA moyen par vente"
+                }
+              },
+              "queryRef": "_Mesures.CA moyen par vente",
+              "nativeQueryRef": "CA moyen par vente"
             }
           ]
         },
@@ -65,38 +97,6 @@
               "displayName": "Année N-1"
             }
           ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Mesures"
-                    }
-                  },
-                  "Property": "Nb ventes"
-                }
-              },
-              "queryRef": "_Mesures.Nb ventes",
-              "nativeQueryRef": "Nb ventes"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Mesures"
-                    }
-                  },
-                  "Property": "CA moyen par vente"
-                }
-              },
-              "queryRef": "_Mesures.CA moyen par vente",
-              "nativeQueryRef": "CA moyen par vente"
-            }
-          ]
         }
       },
       "sortDefinition": {
@@ -114,8 +114,7 @@
             },
             "direction": "Ascending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -133,13 +132,6 @@
               "expr": {
                 "Literal": {
                   "Value": "8D"
-                }
-              }
-            },
-            "innerPadding": {
-              "expr": {
-                "Literal": {
-                  "Value": "20L"
                 }
               }
             },

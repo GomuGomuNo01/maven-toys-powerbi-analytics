@@ -1,9 +1,11 @@
 table Stock
+	lineageTag: ef9baf07-c7be-4112-8255-e854845c2f85
 
 	column 'ID magasin'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: f1a7db97-dbca-48bf-9394-50ea80619277
 		summarizeBy: none
 		sourceColumn: ID magasin
 
@@ -11,8 +13,9 @@ table Stock
 
 	column 'ID produit'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: 63cf7288-1a4b-437d-84fa-85ac9a818065
 		summarizeBy: none
 		sourceColumn: ID produit
 
@@ -21,6 +24,7 @@ table Stock
 	column 'Stock disponible'
 		dataType: int64
 		formatString: #,0
+		lineageTag: a0a832ff-be29-4431-bc0f-2ee02ddb9563
 		summarizeBy: none
 		sourceColumn: Stock disponible
 
@@ -39,22 +43,23 @@ table Stock
 			    ) + 0  // "+ 0" remplace un vide par 0 : aucune vente = demande nulle
 		dataType: int64
 		formatString: #,0
+		lineageTag: 434ce67d-463f-4408-b66f-a04c10def72c
 		summarizeBy: none
 
 		annotation SummarizationSetBy = User
 
-	column 'Ventes moy. par jour' =
-			DIVIDE ( Stock[Ventes 90 j], 90 )
+	column 'Ventes moy. par jour' = DIVIDE ( Stock[Ventes 90 j], 90 )
 		dataType: double
 		formatString: #,0.00
+		lineageTag: 1f0cc1b8-a111-4c21-8b7b-933d6d0573c2
 		summarizeBy: none
 
 		annotation SummarizationSetBy = User
 
-	column 'Couverture (jours)' =
-			DIVIDE ( Stock[Stock disponible], Stock[Ventes moy. par jour] )
+	column 'Couverture (jours)' = DIVIDE ( Stock[Stock disponible], Stock[Ventes moy. par jour] )
 		dataType: double
 		formatString: #,0.0
+		lineageTag: 8585ec1f-75ae-4b68-9b11-a2b1c6bf0c22
 		summarizeBy: none
 
 		annotation SummarizationSetBy = User
@@ -74,8 +79,9 @@ table Stock
 			        4                               // Surstock : plus d'un trimestre de ventes en stock
 			    )
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: 09e19e56-3336-494f-b82f-1bcc3217afbd
 		summarizeBy: none
 
 		annotation SummarizationSetBy = User
@@ -91,6 +97,7 @@ table Stock
 			    6, "Inactif"
 			)
 		dataType: string
+		lineageTag: b3f5f70b-2634-4dac-b36f-9c1a25bcd5f2
 		summarizeBy: none
 		sortByColumn: 'Ordre statut'
 
@@ -135,3 +142,4 @@ table Stock
 				    ColonnesRenommees
 
 	annotation PBI_ResultType = Table
+

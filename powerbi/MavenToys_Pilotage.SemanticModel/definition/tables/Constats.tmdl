@@ -1,19 +1,22 @@
 table Constats
+	lineageTag: 9b28459e-4cb8-490b-9e32-eb6795f0f01d
 
 	column Ordre
 		dataType: int64
-		formatString: 0
 		isHidden
-		isNameInferred
+		formatString: 0
+		lineageTag: 517e3ea3-74b5-4c74-b6ea-2d74570dfa15
 		summarizeBy: none
+		isNameInferred
 		sourceColumn: [Ordre]
 
 		annotation SummarizationSetBy = User
 
-	column 'Thème'
+	column Thème
 		dataType: string
-		isNameInferred
+		lineageTag: 6fecaa93-c010-4efb-8d9f-582da2fc402d
 		summarizeBy: none
+		isNameInferred
 		sourceColumn: [Thème]
 		sortByColumn: Ordre
 
@@ -33,3 +36,4 @@ table Constats
 				        { 5, "Produit à surveiller" }
 				    }
 				)
+

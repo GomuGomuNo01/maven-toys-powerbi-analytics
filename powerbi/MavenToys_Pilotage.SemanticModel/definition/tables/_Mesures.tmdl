@@ -1,54 +1,55 @@
 table _Mesures
+	lineageTag: eaa18b3a-57e7-43ec-a2fa-e48a555654cf
 
-	measure CA =
-			SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Prix unitaire] ) )
+	measure CA = SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Prix unitaire] ) )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: b07f06f8-5264-4258-a739-dd529dbc222b
 
-	measure 'Coût des ventes' =
-			SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Coût unitaire] ) )
+	measure 'Coût des ventes' = SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Coût unitaire] ) )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: 43bd5e20-ab5b-42b9-b413-b35e50caf14c
 
-	measure 'Marge brute' =
-			[CA] - [Coût des ventes]
+	measure 'Marge brute' = [CA] - [Coût des ventes]
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: e990edc7-02cb-4e66-ba19-24c91b9536c2
 
-	measure 'Taux de marge' =
-			DIVIDE ( [Marge brute], [CA] )
+	measure 'Taux de marge' = DIVIDE ( [Marge brute], [CA] )
 		formatString: 0.0 %;-0.0 %;0.0 %
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: 35c8cef7-d608-4301-b75b-d0d650d7cbab
 
-	measure 'Unités vendues' =
-			SUM ( Ventes[Unités] )
+	measure 'Unités vendues' = SUM ( Ventes[Unités] )
 		formatString: #,0
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: 542e1d33-1bfe-4d68-8412-7c849bdd368e
 
-	measure 'Nb ventes' =
-			COUNTROWS ( Ventes )
+	measure 'Nb ventes' = COUNTROWS ( Ventes )
 		formatString: #,0
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: d3cb773d-67f6-49bc-8691-002b573cc751
 
-	measure 'CA moyen par vente' =
-			DIVIDE ( [CA], [Nb ventes] )
+	measure 'CA moyen par vente' = DIVIDE ( [CA], [Nb ventes] )
 		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: 89eee4d0-81f7-4826-a30f-c5a5dd59df52
 
-	measure 'Nb magasins actifs' =
-			DISTINCTCOUNT ( Ventes[ID magasin] )
+	measure 'Nb magasins actifs' = DISTINCTCOUNT ( Ventes[ID magasin] )
 		formatString: #,0
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: 519f990f-0e18-4ddc-866f-d763df64d24a
 
-	measure 'CA moyen par magasin' =
-			DIVIDE ( [CA], [Nb magasins actifs] )
+	measure 'CA moyen par magasin' = DIVIDE ( [CA], [Nb magasins actifs] )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: 54f55d08-74ca-4d73-8a13-194e1bdcc6de
 
-	measure 'CA moyen par jour' =
-			AVERAGEX ( VALUES ( Calendrier[Date] ), [CA] )
+	measure 'CA moyen par jour' = AVERAGEX ( VALUES ( Calendrier[Date] ), [CA] )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 1. Ventes et rentabilité
+		lineageTag: 5f178cd6-1896-46a2-99b8-6ba3436371bc
 
 	measure 'CA N-1' =
 			IF (
@@ -57,6 +58,7 @@ table _Mesures
 			)
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 2. Comparaison N-1
+		lineageTag: 0a571f63-fd91-4844-81ee-8f36caae355d
 
 	measure 'Évol. CA %' =
 			VAR _CAN1 = [CA N-1]
@@ -64,6 +66,7 @@ table _Mesures
 			    IF ( NOT ISBLANK ( _CAN1 ), DIVIDE ( [CA] - _CAN1, _CAN1 ) )
 		formatString: +0.0 %;-0.0 %;0.0 %
 		displayFolder: 2. Comparaison N-1
+		lineageTag: a9e1a369-d013-4ca7-bf8b-e4cac656c950
 
 	measure 'Évol. CA % (hors lancements)' =
 			VAR _CAN1 = [CA N-1]
@@ -71,6 +74,7 @@ table _Mesures
 			    IF ( NOT ISBLANK ( _CAN1 ) && _CAN1 >= 0.25 * [CA], [Évol. CA %] )
 		formatString: +0.0 %;-0.0 %;0.0 %
 		displayFolder: 2. Comparaison N-1
+		lineageTag: 2eb4dce1-997c-4641-be9d-19f6a8cd3498
 
 	measure 'Marge brute N-1' =
 			IF (
@@ -79,6 +83,7 @@ table _Mesures
 			)
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 2. Comparaison N-1
+		lineageTag: 3d2b84af-e1c4-4ce5-b955-3de761ef70b5
 
 	measure 'Évol. marge brute %' =
 			VAR _MargeN1 = [Marge brute N-1]
@@ -86,6 +91,7 @@ table _Mesures
 			    IF ( NOT ISBLANK ( _MargeN1 ), DIVIDE ( [Marge brute] - _MargeN1, _MargeN1 ) )
 		formatString: +0.0 %;-0.0 %;0.0 %
 		displayFolder: 2. Comparaison N-1
+		lineageTag: dcb306c6-06ab-4363-a3d7-3ae38f91485a
 
 	measure 'Écart marge brute vs N-1' =
 			VAR _PeriodeN1Disponible =
@@ -102,6 +108,7 @@ table _Mesures
 			    IF ( _PeriodeN1Disponible, [Marge brute] - [Marge brute N-1] )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 2. Comparaison N-1
+		lineageTag: 670a3abd-b57b-4f70-8226-1572b27db988
 
 	measure 'Taux de marge N-1' =
 			IF (
@@ -110,6 +117,7 @@ table _Mesures
 			)
 		formatString: 0.0 %;-0.0 %;0.0 %
 		displayFolder: 2. Comparaison N-1
+		lineageTag: b1736102-a5b5-416d-af70-a0e5e640cb82
 
 	measure 'Écart taux de marge (pts)' =
 			VAR _TauxN1 = [Taux de marge N-1]
@@ -117,6 +125,7 @@ table _Mesures
 			    IF ( NOT ISBLANK ( _TauxN1 ), ( [Taux de marge] - _TauxN1 ) * 100 )
 		formatString: +0.0;-0.0;0.0
 		displayFolder: 2. Comparaison N-1
+		lineageTag: 5dcff5e9-a7a5-4a3a-8492-4acdc5f27645
 
 	measure 'Unités vendues N-1' =
 			IF (
@@ -125,6 +134,7 @@ table _Mesures
 			)
 		formatString: #,0
 		displayFolder: 2. Comparaison N-1
+		lineageTag: a89950e6-a653-4693-9071-db75208a94d1
 
 	measure 'Évol. unités %' =
 			VAR _UnitesN1 = [Unités vendues N-1]
@@ -132,6 +142,7 @@ table _Mesures
 			    IF ( NOT ISBLANK ( _UnitesN1 ), DIVIDE ( [Unités vendues] - _UnitesN1, _UnitesN1 ) )
 		formatString: +0.0 %;-0.0 %;0.0 %
 		displayFolder: 2. Comparaison N-1
+		lineageTag: e4ab18cb-aba5-4f78-8abc-2280e8002fc2
 
 	measure 'Libellé évol. CA' =
 			VAR _Evol = [Évol. CA %]
@@ -142,6 +153,7 @@ table _Mesures
 			        FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 853eef35-06d5-4de3-9823-a815d50c628a
 
 	measure 'Libellé évol. marge brute' =
 			VAR _Evol = [Évol. marge brute %]
@@ -152,6 +164,7 @@ table _Mesures
 			        FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 5ea622e3-95a2-48aa-8927-3321c981bd1d
 
 	measure 'Libellé écart taux de marge' =
 			VAR _Ecart = [Écart taux de marge (pts)]
@@ -162,6 +175,7 @@ table _Mesures
 			        FORMAT ( _Ecart, "+0.0;-0.0" ) & " pts vs N-1"
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 8bc05b20-ae18-4fda-8940-febf158404ed
 
 	measure 'Libellé évol. unités' =
 			VAR _Evol = [Évol. unités %]
@@ -172,6 +186,7 @@ table _Mesures
 			        FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 36816c85-15a3-42d8-85d3-efa557c11ebc
 
 	measure 'Couleur évol. CA' =
 			SWITCH (
@@ -181,6 +196,7 @@ table _Mesures
 			    "#006300"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: adec4fdf-0d6a-470a-a707-6c2c2b643fa5
 
 	measure 'Couleur écart marge' =
 			SWITCH (
@@ -190,6 +206,7 @@ table _Mesures
 			    "#006300"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 65d1f622-917c-4dcd-8d20-dad2556637ad
 
 	measure 'Couleur évol. marge brute' =
 			SWITCH (
@@ -199,6 +216,7 @@ table _Mesures
 			    "#006300"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 0b027f18-11cf-4e29-932b-e0892992edb8
 
 	measure 'Couleur écart taux de marge' =
 			SWITCH (
@@ -208,6 +226,7 @@ table _Mesures
 			    "#006300"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 055208f8-b172-486b-97a5-5da92c76f53f
 
 	measure 'Couleur évol. unités' =
 			SWITCH (
@@ -217,46 +236,49 @@ table _Mesures
 			    "#006300"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: f43a274a-0217-4bc6-844e-781fbc89ddd3
 
 	measure 'Vue par défaut' =
 			SELECTEDVALUE ( Calendrier[Année] ) = 2023
 			    && NOT ISFILTERED ( Produits[Catégorie] )
 			    && NOT ISFILTERED ( Magasins[Type d'emplacement] )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: e17e8011-fe10-4d71-907d-ac2f3a58ad65
 
 	measure 'Vue par défaut stock' =
 			NOT ISFILTERED ( Produits[Catégorie] )
 			    && NOT ISFILTERED ( Magasins[Type d'emplacement] )
 			    && NOT ISFILTERED ( Stock[Statut stock] )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 9ac89b61-347f-4481-a44d-b495b9d5d222
 
-	measure 'Titre CA mensuel' =
-			IF ( [Vue par défaut], "Le CA dépasse l'année précédente chaque mois", "CA mensuel : N vs N-1" )
+	measure 'Titre CA mensuel' = IF ( [Vue par défaut], "Le CA dépasse l'année précédente chaque mois", "CA mensuel : N vs N-1" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 810b4092-ba60-4b70-b3fa-819fe65c6f98
 
-	measure 'Titre cascade marge' =
-			IF ( [Vue par défaut], "Électronique : seule catégorie qui fait reculer la marge", "Écart de marge brute vs N-1 par catégorie" )
+	measure 'Titre cascade marge' = IF ( [Vue par défaut], "Électronique : seule catégorie qui fait reculer la marge", "Écart de marge brute vs N-1 par catégorie" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: fab07c47-e1c1-4fd8-9faa-1becde42ea13
 
-	measure 'Titre taux de marge' =
-			IF ( [Vue par défaut], "Le taux de marge recule dans 4 catégories sur 5", "Taux de marge par catégorie : N vs N-1" )
+	measure 'Titre taux de marge' = IF ( [Vue par défaut], "Le taux de marge recule dans 4 catégories sur 5", "Taux de marge par catégorie : N vs N-1" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: ebb184d9-6c3f-4780-b204-a56f34345913
 
-	measure 'Titre baisses de marge' =
-			IF ( [Vue par défaut], "Colorbuds concentre l'essentiel de la perte de marge", "Produits dont la marge brute recule le plus" )
+	measure 'Titre baisses de marge' = IF ( [Vue par défaut], "Colorbuds concentre l'essentiel de la perte de marge", "Produits dont la marge brute recule le plus" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 69ac4a72-fbfa-46ad-bd2a-38ade1b5754d
 
-	measure 'Titre emplacements' =
-			IF ( [Vue par défaut], "Un magasin d'aéroport rapporte 1,5 fois plus", "CA moyen par magasin selon l'emplacement" )
+	measure 'Titre emplacements' = IF ( [Vue par défaut], "Un magasin d'aéroport rapporte 1,5 fois plus", "CA moyen par magasin selon l'emplacement" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 45359134-358e-4890-8d12-0bbc5fff744e
 
-	measure 'Titre jours' =
-			IF ( [Vue par défaut], "Vendredi et samedi : pics d'activité", "CA moyen par jour de la semaine" )
+	measure 'Titre jours' = IF ( [Vue par défaut], "Vendredi et samedi : pics d'activité", "CA moyen par jour de la semaine" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 664e9232-2d47-40fa-a6de-50105678049f
 
-	measure 'Titre statuts stock' =
-			IF ( [Vue par défaut stock], "Jouets et Arts créatifs concentrent les ruptures", "Répartition des références par statut" )
+	measure 'Titre statuts stock' = IF ( [Vue par défaut stock], "Jouets et Arts créatifs concentrent les ruptures", "Répartition des références par statut" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 34ceea3f-acd5-416e-b0cd-18e068b96114
 
 	measure 'Couleur meilleur emplacement' =
 			VAR _Max =
@@ -264,6 +286,7 @@ table _Mesures
 			RETURN
 			    IF ( [CA moyen par magasin] = _Max, "#2A78D6", "#B7D3F6" )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 2b859324-7f14-4f58-bc5f-fab2dd9a046e
 
 	measure 'Couleur jours les plus forts' =
 			IF (
@@ -272,6 +295,7 @@ table _Mesures
 			    "#B7D3F6"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: b47e3c1b-a4f9-4b5c-8f45-78785661a5c7
 
 	measure 'Couleur 3 premières villes' =
 			IF (
@@ -280,6 +304,7 @@ table _Mesures
 			    "#B7D3F6"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: ba0e28b5-6c46-40b8-9ef6-cd4be17c231a
 
 	measure Constat =
 			SWITCH (
@@ -291,6 +316,7 @@ table _Mesures
 			    5, [Constat produit à surveiller]
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: b1a2235c-c725-4660-a45e-164431582149
 
 	measure 'Couleur statut stock' =
 			SWITCH (
@@ -300,6 +326,7 @@ table _Mesures
 			    "#52514E"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: c2eeaf41-e8f6-42b6-8b02-0455b15d4beb
 
 	measure 'Constat croissance' =
 			IF (
@@ -310,6 +337,7 @@ table _Mesures
 			        & ", taux de marge " & FORMAT ( [Écart taux de marge (pts)], "+0.0;-0.0" ) & " pts"
 			)
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 52da76e2-fef6-4d3a-b534-ab44abefa131
 
 	measure 'Constat taux de marge' =
 			VAR _Categories = VALUES ( Produits[Catégorie] )
@@ -321,19 +349,22 @@ table _Mesures
 			        "En recul dans " & _EnRecul & " catégorie(s) sur " & COUNTROWS ( _Categories )
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: d77f562f-aff4-41af-8b92-1cf049df4178
 
 	measure 'Constat meilleure catégorie' =
 			VAR _Classement = ADDCOLUMNS ( VALUES ( Produits[Catégorie] ), "@Ecart", [Écart marge brute vs N-1] )
 			VAR _Meilleure = TOPN ( 1, _Classement, [@Ecart], DESC )
 			VAR _Valeur = MAXX ( _Meilleure, [@Ecart] )
 			RETURN
-			    IF (
-			        ISBLANK ( _Valeur ),
-			        BLANK (),
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _Valeur ), BLANK (),
+			        _Valeur <= 0, "Aucune catégorie en hausse de marge",
 			        MAXX ( _Meilleure, Produits[Catégorie] )
 			            & " (" & FORMAT ( _Valeur / 1000, "+#,0;-#,0" ) & " k$)"
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 05c6c094-ac94-4809-999b-181a75767fb4
 
 	measure 'Constat pire catégorie' =
 			VAR _Classement = ADDCOLUMNS ( VALUES ( Produits[Catégorie] ), "@Ecart", [Écart marge brute vs N-1] )
@@ -348,6 +379,7 @@ table _Mesures
 			            & " (" & FORMAT ( _Valeur / 1000, "+#,0;-#,0" ) & " k$)"
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 34c7cdf2-f80e-4314-9e89-ff1b2c18211e
 
 	measure 'Constat produit à surveiller' =
 			VAR _Classement = ADDCOLUMNS ( VALUES ( Produits[Produit] ), "@Ecart", [Écart marge brute vs N-1] )
@@ -362,46 +394,47 @@ table _Mesures
 			            & " (" & FORMAT ( _Valeur / 1000, "+#,0;-#,0" ) & " k$ de marge)"
 			    )
 		displayFolder: 3. Libellés et couleurs
+		lineageTag: 398edd52-6748-4d26-b580-649e078093aa
 
-	measure 'Date de référence stock' =
-			CALCULATE ( MAX ( Ventes[Date] ), REMOVEFILTERS () )
+	measure 'Date de référence stock' = CALCULATE ( MAX ( Ventes[Date] ), REMOVEFILTERS () )
 		formatString: dd/mm/yyyy
 		displayFolder: 4. Stock
+		lineageTag: 1227d93c-caef-4aee-bc4b-b4416dfcbd12
 
-	measure 'Stock disponible (unités)' =
-			SUM ( Stock[Stock disponible] )
+	measure 'Stock disponible (unités)' = SUM ( Stock[Stock disponible] )
 		formatString: #,0
 		displayFolder: 4. Stock
+		lineageTag: 1322d43f-9b38-4d2c-bebb-401d605f7e64
 
-	measure 'Valeur du stock' =
-			SUMX ( Stock, Stock[Stock disponible] * RELATED ( Produits[Coût unitaire] ) )
+	measure 'Valeur du stock' = SUMX ( Stock, Stock[Stock disponible] * RELATED ( Produits[Coût unitaire] ) )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 4. Stock
+		lineageTag: 9189b23a-fb04-4615-803e-fb9a891c7300
 
-	measure 'Nb références' =
-			COUNTROWS ( Stock )
+	measure 'Nb références' = COUNTROWS ( Stock )
 		formatString: #,0
 		displayFolder: 4. Stock
+		lineageTag: 14f34d55-7ffc-4ba2-81fc-652ab850be0b
 
-	measure 'Nb ruptures' =
-			CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Rupture" ) + 0
+	measure 'Nb ruptures' = CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Rupture" ) + 0
 		formatString: #,0
 		displayFolder: 4. Stock
+		lineageTag: ed2bf610-c06e-4dcd-9bcf-d9560867f3ce
 
-	measure 'Nb références critiques' =
-			CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Critique (< 7 j)" ) + 0
+	measure 'Nb références critiques' = CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Critique (< 7 j)" ) + 0
 		formatString: #,0
 		displayFolder: 4. Stock
+		lineageTag: 9ac47917-07e1-43e1-b04b-30412f0c880d
 
-	measure '% références en rupture' =
-			DIVIDE ( [Nb ruptures], [Nb références] )
+	measure '% références en rupture' = DIVIDE ( [Nb ruptures], [Nb références] )
 		formatString: 0.0 %;-0.0 %;0.0 %
 		displayFolder: 4. Stock
+		lineageTag: a0c2b8b2-fb23-40fd-a6dd-40490833573c
 
-	measure 'Couverture moyenne (jours)' =
-			DIVIDE ( [Stock disponible (unités)], SUM ( Stock[Ventes moy. par jour] ) )
+	measure 'Couverture moyenne (jours)' = DIVIDE ( [Stock disponible (unités)], SUM ( Stock[Ventes moy. par jour] ) )
 		formatString: #,0.0
 		displayFolder: 4. Stock
+		lineageTag: ed8f2f51-d87d-4f16-a3ea-d641968b2fd5
 
 	measure 'CA potentiel perdu par jour' =
 			SUMX (
@@ -410,11 +443,12 @@ table _Mesures
 			) + 0
 		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
 		displayFolder: 4. Stock
+		lineageTag: 1f232a46-b7e3-4bce-a9b2-da304d0a267a
 
-	measure 'CA potentiel perdu sur 30 j' =
-			[CA potentiel perdu par jour] * 30
+	measure 'CA potentiel perdu sur 30 j' = [CA potentiel perdu par jour] * 30
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 4. Stock
+		lineageTag: 845a99c3-a9aa-459c-a7a4-f25deeb78f6d
 
 	measure 'Valeur stock immobilisé' =
 			CALCULATE (
@@ -423,29 +457,32 @@ table _Mesures
 			) + 0
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 4. Stock
+		lineageTag: e988681b-baa5-4044-85f4-2fbd58ce1bda
 
-	measure '% stock immobilisé' =
-			DIVIDE ( [Valeur stock immobilisé], [Valeur du stock] )
+	measure '% stock immobilisé' = DIVIDE ( [Valeur stock immobilisé], [Valeur du stock] )
 		formatString: 0.0 %;-0.0 %;0.0 %
 		displayFolder: 4. Stock
+		lineageTag: 709cfe5d-040e-4591-a6b3-87c62ebc8fba
 
 	measure 'Libellé valeur du stock' =
 			FORMAT ( [Stock disponible (unités)], "#,##0" ) & " unités au "
 			    & FORMAT ( [Date de référence stock], "dd/mm/yyyy" )
 		displayFolder: 4. Stock
+		lineageTag: a2fddfaa-5559-4c81-afe8-a31a79324fdd
 
 	measure 'Libellé ruptures' =
 			FORMAT ( [% références en rupture], "0.0 %" ) & " des références + "
 			    & FORMAT ( [Nb références critiques], "#,##0" ) & " critiques"
 		displayFolder: 4. Stock
+		lineageTag: e1be1a35-c415-4767-9155-c06f60519dc4
 
-	measure 'Libellé CA perdu' =
-			FORMAT ( [CA potentiel perdu par jour], "#,##0" ) & " $ par jour (estimation)"
+	measure 'Libellé CA perdu' = FORMAT ( [CA potentiel perdu par jour], "#,##0" ) & " $ par jour (estimation)"
 		displayFolder: 4. Stock
+		lineageTag: 905f7a97-c54c-4cb0-a57a-a1a8939f87e2
 
-	measure 'Libellé stock immobilisé' =
-			FORMAT ( [% stock immobilisé], "0.0 %" ) & " de la valeur du stock"
+	measure 'Libellé stock immobilisé' = FORMAT ( [% stock immobilisé], "0.0 %" ) & " de la valeur du stock"
 		displayFolder: 4. Stock
+		lineageTag: ab974f9b-078f-4bc4-aba1-27d9eb3aed2f
 
 	measure 'Écart marge brute (10 plus fortes baisses)' =
 			VAR _Ecart = [Écart marge brute vs N-1]
@@ -455,6 +492,7 @@ table _Mesures
 			    IF ( _Ecart < 0 && _Rang <= 10, _Ecart )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 5. Classements
+		lineageTag: 43fe9192-961e-4413-8741-4e876b407579
 
 	measure 'CA (10 premières villes)' =
 			VAR _Rang =
@@ -463,6 +501,7 @@ table _Mesures
 			    IF ( _Rang <= 10, [CA] )
 		formatString: #,0 \$;-#,0 \$;0 \$
 		displayFolder: 5. Classements
+		lineageTag: 48136121-2deb-4bec-9bd8-17a6d234f391
 
 	measure 'CA perdu par jour (10 premiers produits)' =
 			VAR _Perte = [CA potentiel perdu par jour]
@@ -472,10 +511,12 @@ table _Mesures
 			    IF ( _Perte > 0 && _Rang <= 10, _Perte )
 		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
 		displayFolder: 5. Classements
+		lineageTag: 7f372189-a836-45ea-afd3-b6f806561dfa
 
 	column Colonne1
 		dataType: string
 		isHidden
+		lineageTag: 0287a9c0-4086-47a2-be8b-0f090207a0b3
 		summarizeBy: none
 		sourceColumn: Colonne1
 
@@ -483,7 +524,7 @@ table _Mesures
 
 	partition _Mesures = m
 		mode: import
-		source =
-				#table(type table [Colonne1 = text], {})
+		source = #table(type table [Colonne1 = text], {})
 
 	annotation PBI_ResultType = Table
+

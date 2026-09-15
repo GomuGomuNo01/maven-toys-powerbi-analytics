@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "kpi_unites_libelle",
   "position": {
-    "x": 961.0,
+    "x": 961,
     "y": 154,
     "z": 12,
     "height": 26,
-    "width": 303.0,
+    "width": 303,
     "tabOrder": 12
   },
   "visual": {

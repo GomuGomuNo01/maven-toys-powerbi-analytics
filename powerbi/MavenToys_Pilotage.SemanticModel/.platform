@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "MavenToys_Pilotage"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1108a080-bf12-401f-abe9-6a644762910d"
+  }
+}

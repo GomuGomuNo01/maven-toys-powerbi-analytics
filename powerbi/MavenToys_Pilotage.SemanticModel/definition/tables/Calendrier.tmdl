@@ -1,10 +1,12 @@
 table Calendrier
+	lineageTag: 5d04ed51-0b31-4fd4-87c5-b4fed77dbb04
 	dataCategory: Time
 
 	column Date
 		dataType: dateTime
-		formatString: dd/mm/yyyy
 		isKey
+		formatString: dd/mm/yyyy
+		lineageTag: 09d8cade-22dc-4c94-97fd-ff4d904a7f13
 		summarizeBy: none
 		sourceColumn: Date
 
@@ -12,9 +14,10 @@ table Calendrier
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column 'Année'
+	column Année
 		dataType: int64
 		formatString: 0
+		lineageTag: 7d20f781-7e97-4579-b9bc-3a655cb969b3
 		summarizeBy: none
 		sourceColumn: Année
 
@@ -22,8 +25,9 @@ table Calendrier
 
 	column 'N° mois'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: 6a50475a-6e32-4800-b7fb-10e88b2aafb8
 		summarizeBy: none
 		sourceColumn: N° mois
 
@@ -31,6 +35,7 @@ table Calendrier
 
 	column Mois
 		dataType: string
+		lineageTag: cf9b058d-2123-4280-8914-590928cc9dfe
 		summarizeBy: none
 		sourceColumn: Mois
 		sortByColumn: 'N° mois'
@@ -39,6 +44,7 @@ table Calendrier
 
 	column Trimestre
 		dataType: string
+		lineageTag: 43033796-0ee6-4fbd-90e2-243fea521c6d
 		summarizeBy: none
 		sourceColumn: Trimestre
 
@@ -46,15 +52,17 @@ table Calendrier
 
 	column 'Clé année-mois'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: e41f49a3-79d0-459f-adec-a4a92f89ab2a
 		summarizeBy: none
 		sourceColumn: Clé année-mois
 
 		annotation SummarizationSetBy = User
 
-	column 'Mois-année'
+	column Mois-année
 		dataType: string
+		lineageTag: 0ab4d1aa-66b4-44c0-ab8e-6b0c3672c4fa
 		summarizeBy: none
 		sourceColumn: Mois-année
 		sortByColumn: 'Clé année-mois'
@@ -63,8 +71,9 @@ table Calendrier
 
 	column 'N° jour semaine'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: 05cd58b9-4c82-4ff2-b2de-f51d067354b8
 		summarizeBy: none
 		sourceColumn: N° jour semaine
 
@@ -72,6 +81,7 @@ table Calendrier
 
 	column 'Jour semaine'
 		dataType: string
+		lineageTag: 1656a2cf-f3cb-433a-9e5d-577f04220970
 		summarizeBy: none
 		sourceColumn: Jour semaine
 		sortByColumn: 'N° jour semaine'
@@ -121,3 +131,4 @@ table Calendrier
 				    AjoutJour
 
 	annotation PBI_ResultType = Table
+

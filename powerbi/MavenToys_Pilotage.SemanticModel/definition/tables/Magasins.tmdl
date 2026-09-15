@@ -1,9 +1,11 @@
 table Magasins
+	lineageTag: 90c6d692-f81b-4a16-912a-60e05c4e1759
 
 	column 'ID magasin'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: 8d5516cf-49cd-4eee-b80d-d73de4884f82
 		summarizeBy: none
 		sourceColumn: ID magasin
 
@@ -11,6 +13,7 @@ table Magasins
 
 	column Magasin
 		dataType: string
+		lineageTag: 97096a2d-a9fe-44ee-b9d3-be2df06f575e
 		summarizeBy: none
 		sourceColumn: Magasin
 
@@ -18,6 +21,7 @@ table Magasins
 
 	column Ville
 		dataType: string
+		lineageTag: 7c5fd946-be97-49fd-8f61-102684de50e5
 		summarizeBy: none
 		sourceColumn: Ville
 
@@ -25,6 +29,7 @@ table Magasins
 
 	column 'Type d''emplacement'
 		dataType: string
+		lineageTag: 697fef41-2174-4566-9207-a71655d06747
 		summarizeBy: none
 		sourceColumn: Type d'emplacement
 
@@ -33,6 +38,7 @@ table Magasins
 	column 'Date d''ouverture'
 		dataType: dateTime
 		formatString: dd/mm/yyyy
+		lineageTag: 7dc195fa-3e4e-4a66-8889-4fee74374f5f
 		summarizeBy: none
 		sourceColumn: Date d'ouverture
 
@@ -105,3 +111,4 @@ table Magasins
 				    ColonnesRenommees
 
 	annotation PBI_ResultType = Table
+

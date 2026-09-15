@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "kpi_marge_valeur",
   "position": {
-    "x": 331.0,
+    "x": 331,
     "y": 78,
     "z": 7,
     "height": 78,
-    "width": 303.0,
+    "width": 303,
     "tabOrder": 7
   },
   "visual": {
