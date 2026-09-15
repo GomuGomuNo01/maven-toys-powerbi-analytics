@@ -9,7 +9,9 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["DossierDonnees", "Ventes", "Produits", "Magasins", "Stock", "Calendrier", "Constats", "_Mesures"]
+annotation PBI_QueryOrder = ["DossierDonnees","Ventes","Produits","Magasins","Stock","Calendrier","_Mesures"]
+
+annotation PBI_ProTooling = ["DevMode"]
 
 ref table Ventes
 ref table Produits
@@ -18,3 +20,6 @@ ref table Stock
 ref table Calendrier
 ref table Constats
 ref table _Mesures
+
+ref cultureInfo fr-FR
+

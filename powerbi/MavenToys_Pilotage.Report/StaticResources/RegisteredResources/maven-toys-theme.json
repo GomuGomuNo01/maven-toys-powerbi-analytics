@@ -52,14 +52,22 @@
         "background": [
           {
             "show": true,
-            "color": { "solid": { "color": "#FFFFFF" } },
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
             "transparency": 0
           }
         ],
         "border": [
           {
             "show": true,
-            "color": { "solid": { "color": "#E1E0D9" } },
+            "color": {
+              "solid": {
+                "color": "#E1E0D9"
+              }
+            },
             "radius": 8,
             "width": 1
           }
@@ -74,7 +82,11 @@
             "show": true,
             "fontFamily": "Segoe UI Semibold",
             "fontSize": 12,
-            "fontColor": { "solid": { "color": "#0B0B0B" } }
+            "fontColor": {
+              "solid": {
+                "color": "#0B0B0B"
+              }
+            }
           }
         ]
       }
@@ -83,13 +95,21 @@
       "*": {
         "background": [
           {
-            "color": { "solid": { "color": "#F4F4F1" } },
+            "color": {
+              "solid": {
+                "color": "#F4F4F1"
+              }
+            },
             "transparency": 0
           }
         ],
         "outspace": [
           {
-            "color": { "solid": { "color": "#F4F4F1" } },
+            "color": {
+              "solid": {
+                "color": "#F4F4F1"
+              }
+            },
             "transparency": 0
           }
         ]

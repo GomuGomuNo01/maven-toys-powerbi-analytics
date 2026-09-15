@@ -214,6 +214,12 @@ Le statut d'une référence ne dépend d'aucun filtre et doit servir de **légen
 
 **Contrôle** : dans la vue Table, filtrer `Statut stock` = Rupture : **77 lignes**.
 
+### 4.2 Table calculée Constats
+
+**Modélisation > Nouvelle table** > coller la formule de [`powerbi/dax/03_table_constats.dax`](../powerbi/dax/03_table_constats.dax). Puis `Thème` > **Trier par colonne > Ordre**, et masquer `Ordre`.
+
+**Pourquoi ?** Le bloc « À retenir » est un tableau de 5 lignes (croissance, taux de marge, plus forte hausse, plus forte baisse, produit à surveiller). La mesure `Constat` renvoie, pour chaque ligne, une phrase calculée à partir des filtres en cours. Une zone de texte classique ne peut pas faire cela : elle resterait figée sur 2023.
+
 ---
 
 ## Étape 5 : Mesures DAX (30 min)
@@ -320,7 +326,7 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 | **Graphique en courbes** | Axe X : `Calendrier[Mois]`. Axe Y : `CA`, `CA N-1`. N en bleu 3 px avec marqueurs, N-1 en gris **pointillé**. Axe des valeurs en milliers. Titre **fx** : `Titre CA mensuel` | L'année analysée ressort, l'année de référence reste en retrait |
 | **Graphique en cascade** | Catégorie : `Produits[Catégorie]`. Y : `Écart marge brute vs N-1`. Tri décroissant. Hausse verte, baisse rouge, total bleu. Titre **fx** : `Titre cascade marge` | Montre la contribution de chaque catégorie à la variation totale |
 | **Graphique à barres groupées** | Axe Y : `Produits[Catégorie]`. Axe X : `Taux de marge N-1` (gris), `Taux de marge` (bleu). Titre **fx** : `Titre taux de marge` | Montre que la baisse de rentabilité est généralisée |
-| **Zone de texte** « À retenir » | 3 constats et 1 priorité, chiffres clés en **gras** | Le lecteur retient le message en 10 secondes |
+| **Table** « À retenir sur la période sélectionnée » | Colonnes : `Constats[Thème]` et la mesure `Constat`. Tri croissant sur `Thème` (donc sur `Ordre`), totaux désactivés, lignes aérées | Le lecteur retient le message en 10 secondes, et les phrases restent justes quel que soit le filtre (ex. Électronique : « CA -27,8 % ») |
 
 **Pourquoi deux cartes empilées ?** Les *Étiquettes de référence* du visuel **Carte** récent donnent un résultat proche dans un seul visuel. Les cartes empilées sont plus simples à maintenir et permettent de colorer l'évolution indépendamment de la valeur.
 
@@ -341,7 +347,7 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 
 | Visuel | Configuration | Pourquoi |
 |---|---|---|
-| **Nuage de points** « Les produits à fort CA ont souvent une marge faible » | Valeurs : `Produits[Produit]`. X : `CA` (en milliers). Y : `Taux de marge`. Info-bulles : `Évol. CA %`, `Marge brute`. Étiquettes de catégorie en 8 pt | Montre d'un coup d'œil les produits à volume élevé mais peu rentables (Lego Bricks, Magic Sand). Option : **Analytique > Ligne moyenne** sur X et Y pour créer 4 quadrants |
+| **Nuage de points** « Les produits à fort CA ont souvent une marge faible » | Valeurs : `Produits[Produit]`. X : `CA` (en milliers), **Format > Axe X > Échelle : Log**, début fixé à 10 000 (une échelle logarithmique ne peut pas contenir 0). Y : `Taux de marge`. Info-bulles : `Évol. CA %`, `Marge brute`. Étiquettes de catégorie en 8 pt | Montre d'un coup d'œil les produits à volume élevé mais peu rentables (Lego Bricks, Magic Sand). L'échelle logarithmique écarte les petits produits, sinon tassés et illisibles. Option : **Analytique > Ligne moyenne** sur X et Y pour créer 4 quadrants |
 | **Graphique à barres** | Axe Y : `Produits[Produit]`. X : `Écart marge brute (10 plus fortes baisses)`, en rouge. Tri croissant. Axe des valeurs masqué (les étiquettes suffisent). Titre **fx** : `Titre baisses de marge` | Identifie immédiatement Colorbuds |
 | **Table** « Détail par produit » | `Produit`, `Catégorie`, `CA`, `Évol. CA % (hors lancements)` (renommée « Évol. CA % »), `Marge brute`, `Écart marge brute vs N-1`, `Taux de marge`. Couleur de police **fx** : `Couleur évol. CA` et `Couleur écart marge`. En-têtes sur fond gris clair, largeurs de colonnes fixées pour occuper toute la largeur | Détail chiffré lisible. L'évolution est masquée pour les produits lancés en 2022 (base N-1 inférieure à 25 % du CA) : un « +24 825 % » n'aide pas à décider. Des barres de données ont été testées puis écartées : elles masquaient les montants |
 
@@ -434,6 +440,12 @@ Cas limites testés :
 | Catégorie **Électronique** filtrée (page Synthèse, dans l'interface) | CA 806 312 $ (-27,8 %) en rouge, titres neutres (« CA mensuel : N vs N-1 ») | ✅ |
 | Top 10 des baisses de marge | Jenga (11e, -1 309 $) est exclu, Dinosaur Figures (10e) inclus | ✅ |
 | Magic Sand dans le détail produits | Évolution masquée (base N-1 de 3 486 $ pour 868 849 $ de CA) | ✅ |
+| Tableau « À retenir », Électronique filtrée | « CA -27,8 % », « Aucune catégorie en hausse de marge », « Électronique (-210 k$) » | ✅ |
+| Tableau « À retenir », année 2022 | « Pas de période N-1 comparable pour cette sélection » | ✅ |
+| Navigation : Ctrl + clic sur « Stocks » puis « Produits » | La page correspondante s'ouvre | ✅ |
+| Nuage de points | Axe horizontal gradué 10K / 100K / 1 000K (échelle logarithmique) | ✅ |
+| Actualisation depuis GitHub, sans fichier local | 829 262 ventes chargées, CA identique | ✅ |
+| `verifier_coherence.py` | 67 mesures, 5 colonnes, table Constats, 5 requêtes et paramètre identiques au modèle | ✅ |
 | 67 mesures évaluées dans 5 contextes de filtre | Aucune erreur DAX | ✅ |
 | 4 pages affichées | Aucun message d'erreur de visuel | ✅ |
 
@@ -453,4 +465,10 @@ Si vous modifiez le rapport :
 
 Le fichier `.pbi/cache.abf` (données en cache) est exclu par le `.gitignore` : les données restent dans `data/raw/`, le dépôt ne stocke que la logique.
 
-**Source de vérité.** Le modèle `MavenToys_Pilotage.SemanticModel/` fait foi. Les fichiers `power-query/*.pq` et `dax/*.dax` en sont une version commentée, pratique à lire sur GitHub : si vous modifiez une mesure dans Power BI, reportez la modification dans `02_mesures.dax` pour garder les deux alignés.
+**Source de vérité.** Le modèle `MavenToys_Pilotage.SemanticModel/` fait foi. Les fichiers `power-query/*.pq` et `dax/*.dax` en sont une version commentée, pratique à lire sur GitHub : si vous modifiez une mesure dans Power BI, reportez la modification dans `02_mesures.dax`, puis lancez le contrôle de cohérence avant de commiter :
+
+```bash
+python analysis/verifier_coherence.py
+```
+
+Le script compare mesures, colonnes calculées, table Constats, requêtes et paramètre entre les fichiers et le modèle, et signale précisément chaque écart (code retour 1).

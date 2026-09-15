@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "nuage_produits",
   "position": {
     "x": 16,
@@ -32,42 +32,6 @@
             }
           ]
         },
-        "X": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Mesures"
-                    }
-                  },
-                  "Property": "CA"
-                }
-              },
-              "queryRef": "_Mesures.CA",
-              "nativeQueryRef": "CA"
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Mesures"
-                    }
-                  },
-                  "Property": "Taux de marge"
-                }
-              },
-              "queryRef": "_Mesures.Taux de marge",
-              "nativeQueryRef": "Taux de marge"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -97,6 +61,43 @@
               },
               "queryRef": "_Mesures.Marge brute",
               "nativeQueryRef": "Marge brute"
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Mesures"
+                    }
+                  },
+                  "Property": "CA"
+                }
+              },
+              "queryRef": "_Mesures.CA",
+              "nativeQueryRef": "CA",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Mesures"
+                    }
+                  },
+                  "Property": "Taux de marge"
+                }
+              },
+              "queryRef": "_Mesures.Taux de marge",
+              "nativeQueryRef": "Taux de marge"
             }
           ]
         }
@@ -134,10 +135,10 @@
                 }
               }
             },
-            "axisScale": {
+            "logAxisScale": {
               "expr": {
                 "Literal": {
-                  "Value": "'log'"
+                  "Value": "true"
                 }
               }
             },

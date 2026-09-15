@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "barres_emplacement",
   "position": {
     "x": 16,
@@ -29,24 +29,6 @@
               "queryRef": "Magasins.Type d'emplacement",
               "nativeQueryRef": "Type d'emplacement",
               "active": true
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Mesures"
-                    }
-                  },
-                  "Property": "CA moyen par magasin"
-                }
-              },
-              "queryRef": "_Mesures.CA moyen par magasin",
-              "nativeQueryRef": "CA moyen par magasin"
             }
           ]
         },
@@ -81,6 +63,24 @@
               "nativeQueryRef": "Évol. CA %"
             }
           ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Mesures"
+                    }
+                  },
+                  "Property": "CA moyen par magasin"
+                }
+              },
+              "queryRef": "_Mesures.CA moyen par magasin",
+              "nativeQueryRef": "CA moyen par magasin"
+            }
+          ]
         }
       },
       "sortDefinition": {
@@ -98,8 +98,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {

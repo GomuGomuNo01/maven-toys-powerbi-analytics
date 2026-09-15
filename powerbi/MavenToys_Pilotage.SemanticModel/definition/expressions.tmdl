@@ -1,3 +1,5 @@
 expression DossierDonnees = "https://raw.githubusercontent.com/GomuGomuNo01/maven-toys-powerbi-analytics/main/data/raw/" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 3c0bc974-22ae-4f42-a16f-63ebfc4a51df
 
 	annotation PBI_ResultType = Text
+

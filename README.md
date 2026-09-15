@@ -146,7 +146,7 @@ Tableau complet et cas limites testés : [docs/03_guide_power_bi.md](docs/03_gui
 | **Power Query (M)** | Import, nettoyage et transformation des données |
 | **DAX** | Mesures, comparaisons temporelles, classements, colonnes calculées |
 | **Projet Power BI (PBIP)** | Modèle (TMDL) et rapport (PBIR) enregistrés en fichiers texte, versionnables |
-| **Python (pandas)** | Audit de qualité et calcul des valeurs de référence |
+| **Python (pandas)** | Audit de qualité, calcul des valeurs de référence et contrôle de cohérence du code |
 | **Git / GitHub** | Versionnage du code, du rapport et de la documentation |
 | **IntelliJ IDEA** | Édition des scripts et de la documentation |
 
@@ -171,8 +171,11 @@ Deux tables de faits partagent les dimensions `Produits` et `Magasins` : un mêm
 | Classements | Écart marge brute (10 plus fortes baisses), CA (10 premières villes) |
 | Libellés et couleurs | Libellé évol. CA (« +30,9 % vs N-1 »), couleurs vert / rouge des évolutions, couleur du statut de stock |
 | Titres dynamiques et mises en évidence | Titre CA mensuel (message clé ou titre neutre selon les filtres), Couleur meilleur emplacement |
+| Constats automatiques | Constat croissance, Constat pire catégorie, Constat produit à surveiller (phrases recalculées pour chaque sélection) |
 
 Code source lisible : [requêtes Power Query](powerbi/power-query), [mesures et colonnes DAX](powerbi/dax), [modèle TMDL](powerbi/MavenToys_Pilotage.SemanticModel/definition), [thème](powerbi/theme/maven-toys-theme.json).
+
+Le modèle TMDL fait foi ; les fichiers `.dax` et `.pq` en sont la version commentée. Le script [`analysis/verifier_coherence.py`](analysis/verifier_coherence.py) vérifie automatiquement qu'ils restent identiques au modèle.
 
 ## 7. Le rapport Power BI
 
@@ -187,18 +190,19 @@ Projet : [`powerbi/MavenToys_Pilotage.pbip`](powerbi/MavenToys_Pilotage.pbip). T
 | Une couleur = un sens | Bleu pour l'année analysée, gris pour N-1 (pointillés sur les courbes), rouge réservé aux signaux négatifs |
 | Mise en évidence | Seul l'élément qui porte le message est en couleur soutenue (meilleur emplacement, jours les plus forts), calculé par DAX pour rester juste quand on filtre |
 | Titres qui disent quelque chose | Titres affirmatifs dans la vue analysée, remplacés automatiquement par un titre neutre dès qu'un filtre change le contexte |
+| Constats toujours justes | Le bloc « À retenir » est un tableau de phrases calculées en DAX : il se met à jour avec les filtres |
 | Tableaux lisibles | En-têtes marqués, colonnes réparties sur toute la largeur, évolutions non significatives masquées, tri par urgence |
 | Accessibilité | Palette testée pour le daltonisme, textes alternatifs sur les graphiques |
 
 ### Synthèse : comment évolue la performance ?
 
-Cartes KPI avec évolution vs N-1, CA mensuel N vs N-1, cascade de l'écart de marge par catégorie, taux de marge par catégorie et constats clés (capture en haut de page).
+Cartes KPI avec évolution vs N-1, CA mensuel N vs N-1, cascade de l'écart de marge par catégorie, taux de marge par catégorie et tableau « À retenir » dont les constats sont recalculés pour chaque sélection (capture en haut de page).
 
 ### Produits : quels produits font varier la marge ?
 
 ![Page Produits](docs/images/02_produits.png)
 
-Matrice volume / rentabilité des 35 produits, 10 plus fortes baisses de marge, détail avec mise en forme conditionnelle.
+Positionnement volume / rentabilité des 35 produits (CA en échelle logarithmique pour distinguer les petits produits), 10 plus fortes baisses de marge, détail avec mise en forme conditionnelle.
 
 ### Magasins : quels magasins performent le mieux ?
 
@@ -270,14 +274,14 @@ Analyse complète : [docs/04_resultats_recommandations.md](docs/04_resultats_rec
 - **Marge brute uniquement** : pas de loyers ni de salaires, donc pas de rentabilité nette par magasin.
 - **Seuils de stock (7 et 90 jours) hypothétiques** : à valider avec les délais réels de réapprovisionnement.
 - **Évolutions en % extrêmes pour les produits récents** (Magic Sand : +24 825 %) : l'écart en valeur fait référence ; le détail produits masque ces évolutions non significatives.
-- **Bloc « À retenir » en texte fixe** : il décrit janvier-septembre 2023 et ne change pas avec les filtres (les titres des graphiques, eux, s'adaptent).
+- **Actualisation depuis GitHub** : sans fichier local, la première actualisation télécharge les CSV (environ 3 minutes, connexion internet nécessaire).
 
 ## 12. Pistes d'amélioration
 
 - Prévision des ventes du 4e trimestre pour dimensionner les commandes.
 - Analyse ABC des produits et suivi dédié des lancements.
 - Publication sur Power BI Service avec actualisation planifiée et sécurité par ligne (un directeur ne voit que son magasin).
-- Intégration continue : validation automatique du modèle et du rapport à chaque commit.
+- Intégration continue : exécuter `verifier_coherence.py` et `audit_donnees.py` à chaque commit (GitHub Actions).
 - Alimentation depuis une base SQL plutôt que des fichiers CSV.
 
 ## 13. Compétences démontrées
@@ -303,13 +307,14 @@ maven-toys-powerbi-analytics/
 ├── data/raw/                              Données sources (CSV) et dictionnaire des données
 ├── analysis/
 │   ├── audit_donnees.py                   Audit qualité et valeurs de référence
+│   ├── verifier_coherence.py              Contrôle : code .dax / .pq identique au modèle Power BI
 │   └── requirements.txt
 ├── powerbi/
 │   ├── MavenToys_Pilotage.pbip            Point d'entrée du rapport (à ouvrir dans Power BI Desktop)
 │   ├── MavenToys_Pilotage.SemanticModel/  Modèle : tables, relations, mesures (TMDL)
 │   ├── MavenToys_Pilotage.Report/         Rapport : pages et visuels (PBIR)
 │   ├── power-query/                       Requêtes M commentées
-│   ├── dax/                               Colonnes calculées et mesures commentées
+│   ├── dax/                               Colonnes calculées, table Constats et mesures commentées
 │   └── theme/                             Thème Power BI (JSON)
 ├── docs/
 │   ├── 01_cadrage_besoin.md
@@ -336,6 +341,7 @@ python analysis/audit_donnees.py
 3. Ouvrir `powerbi/MavenToys_Pilotage.pbip` dans Power BI Desktop (version de juillet 2026 ou plus récente).
 4. Cliquer sur **Actualiser maintenant** : les données sont lues directement depuis ce dépôt GitHub, aucun chemin à configurer (si Power BI le demande, choisir l'accès **Anonyme**).
 5. Hors connexion : **Accueil > Transformer les données > Modifier les paramètres**, remplacer `DossierDonnees` par le chemin local du dossier `data/raw/` (terminé par `\`), puis actualiser. Dans Power BI Desktop, les boutons de navigation du rapport s'utilisent avec **Ctrl + clic**.
+6. Pour obtenir un fichier unique avec les données incluses (partage par e-mail, par exemple) : après actualisation, **Fichier > Enregistrer sous > Type : Fichier Power BI (*.pbix)**. Le dépôt versionne le format PBIP, lisible dans Git, et non le `.pbix` binaire.
 
 ---
 
