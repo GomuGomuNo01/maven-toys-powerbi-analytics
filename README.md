@@ -9,6 +9,10 @@
 
 Analyse de 829 262 ventes d'une enseigne de 50 magasins de jouets pour répondre à une question de direction : **la croissance est-elle rentable, et où agir en priorité avant la fin d'année ?**
 
+[![Télécharger le rapport Power BI](https://img.shields.io/badge/T%C3%A9l%C3%A9charger%20le%20rapport-.pbix%20avec%20donn%C3%A9es-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases/latest/download/MavenToys_Pilotage.pbix)
+
+*Fichier unique qui s'ouvre directement dans Power BI Desktop, données incluses, sans configuration. Toutes les versions : [Releases](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases).*
+
 ![Page Synthèse du rapport Power BI](docs/images/01_synthese.png)
 
 ---
@@ -179,7 +183,7 @@ Le modèle TMDL fait foi ; les fichiers `.dax` et `.pq` en sont la version comme
 
 ## 7. Le rapport Power BI
 
-Projet : [`powerbi/MavenToys_Pilotage.pbip`](powerbi/MavenToys_Pilotage.pbip). Toutes les captures montrent la vue par défaut : **janvier-septembre 2023 comparé à la même période 2022**.
+Rapport prêt à l'emploi : [télécharger `MavenToys_Pilotage.pbix`](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases/latest/download/MavenToys_Pilotage.pbix) (données incluses). Code source : [`powerbi/MavenToys_Pilotage.pbip`](powerbi/MavenToys_Pilotage.pbip). Toutes les captures montrent la vue par défaut : **janvier-septembre 2023 comparé à la même période 2022**.
 
 **Principes de conception**
 
@@ -341,7 +345,7 @@ python analysis/audit_donnees.py
 3. Ouvrir `powerbi/MavenToys_Pilotage.pbip` dans Power BI Desktop (version de juillet 2026 ou plus récente).
 4. Cliquer sur **Actualiser maintenant** : les données sont lues directement depuis ce dépôt GitHub, aucun chemin à configurer (si Power BI le demande, choisir l'accès **Anonyme**).
 5. Hors connexion : **Accueil > Transformer les données > Modifier les paramètres**, remplacer `DossierDonnees` par le chemin local du dossier `data/raw/` (terminé par `\`), puis actualiser. Dans Power BI Desktop, les boutons de navigation du rapport s'utilisent avec **Ctrl + clic**.
-6. Pour obtenir un fichier unique avec les données incluses (partage par e-mail, par exemple) : après actualisation, **Fichier > Enregistrer sous > Type : Fichier Power BI (*.pbix)**. Le dépôt versionne le format PBIP, lisible dans Git, et non le `.pbix` binaire.
+6. Pour un fichier unique avec les données incluses : le télécharger depuis la [dernière release](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases/latest), ou le recréer après actualisation via **Fichier > Enregistrer sous > Type : Fichier Power BI (*.pbix)**. Le dépôt versionne le format PBIP, lisible dans Git ; le `.pbix` binaire est publié dans les releases.
 
 ---
 
