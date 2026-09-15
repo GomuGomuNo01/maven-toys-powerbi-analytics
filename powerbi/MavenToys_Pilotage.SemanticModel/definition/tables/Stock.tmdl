@@ -1,0 +1,132 @@
+table Stock
+
+	column 'ID magasin'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: ID magasin
+
+		annotation SummarizationSetBy = User
+
+	column 'ID produit'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: ID produit
+
+		annotation SummarizationSetBy = User
+
+	column 'Stock disponible'
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Stock disponible
+
+		annotation SummarizationSetBy = User
+
+	column 'Ventes 90 j' =
+			VAR _Magasin = Stock[ID magasin]
+			VAR _Produit = Stock[ID produit]
+			VAR _DateReference = MAX ( Ventes[Date] )  // 30/09/2023, dernière date disponible
+			RETURN
+			    CALCULATE (
+			        SUM ( Ventes[Unités] ),
+			        Ventes[ID magasin] = _Magasin,
+			        Ventes[ID produit] = _Produit,
+			        Ventes[Date] > _DateReference - 90
+			    ) + 0  // "+ 0" remplace un vide par 0 : aucune vente = demande nulle
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column 'Ventes moy. par jour' =
+			DIVIDE ( Stock[Ventes 90 j], 90 )
+		dataType: double
+		formatString: #,0.00
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column 'Couverture (jours)' =
+			DIVIDE ( Stock[Stock disponible], Stock[Ventes moy. par jour] )
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column 'Ordre statut' =
+			VAR _Stock = Stock[Stock disponible]
+			VAR _Demande = Stock[Ventes moy. par jour]
+			VAR _Couverture = Stock[Couverture (jours)]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        _Stock = 0 && _Demande > 0, 1,  // Rupture : demande existante, rien en rayon
+			        _Stock = 0, 6,                  // Inactif : ni stock ni vente
+			        _Demande = 0, 5,                // Stock dormant : du stock mais plus aucune vente
+			        _Couverture < 7, 2,             // Critique : épuisement en moins d'une semaine
+			        _Couverture <= 90, 3,           // Normal
+			        4                               // Surstock : plus d'un trimestre de ventes en stock
+			    )
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column 'Statut stock' =
+			SWITCH (
+			    Stock[Ordre statut],
+			    1, "Rupture",
+			    2, "Critique (< 7 j)",
+			    3, "Normal (7 à 90 j)",
+			    4, "Surstock (> 90 j)",
+			    5, "Stock dormant",
+			    6, "Inactif"
+			)
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Ordre statut'
+
+		annotation SummarizationSetBy = User
+
+	partition Stock = m
+		mode: import
+		source =
+				// Requête : Stock (table de faits "photo")
+				// Grain : une ligne = un produit dans un magasin, à la date de fin des données
+				// Attention : pas de date dans cette table. Ce n'est pas un historique mais un état
+				// instantané. Elle ne sera donc PAS reliée au calendrier.
+				let
+				    Source = Csv.Document(
+				        File.Contents(DossierDonnees & "inventory.csv"),
+				        [Delimiter = ",", Columns = 3, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
+				    ),
+				    EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    TypesAppliques = Table.TransformColumnTypes(
+				        EntetesPromues,
+				        {
+				            {"Store_ID", Int64.Type},
+				            {"Product_ID", Int64.Type},
+				            {"Stock_On_Hand", Int64.Type}
+				        },
+				        "en-US"
+				    ),
+				    ColonnesRenommees = Table.RenameColumns(
+				        TypesAppliques,
+				        {
+				            {"Store_ID", "ID magasin"},
+				            {"Product_ID", "ID produit"},
+				            {"Stock_On_Hand", "Stock disponible"}
+				        }
+				    )
+				in
+				    ColonnesRenommees
+
+	annotation PBI_ResultType = Table

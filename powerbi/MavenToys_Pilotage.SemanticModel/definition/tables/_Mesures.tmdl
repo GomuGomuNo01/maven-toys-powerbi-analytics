@@ -1,0 +1,423 @@
+table _Mesures
+
+	measure CA =
+			SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Prix unitaire] ) )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'Coût des ventes' =
+			SUMX ( Ventes, Ventes[Unités] * RELATED ( Produits[Coût unitaire] ) )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'Marge brute' =
+			[CA] - [Coût des ventes]
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'Taux de marge' =
+			DIVIDE ( [Marge brute], [CA] )
+		formatString: 0.0 %;-0.0 %;0.0 %
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'Unités vendues' =
+			SUM ( Ventes[Unités] )
+		formatString: #,0
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'Nb ventes' =
+			COUNTROWS ( Ventes )
+		formatString: #,0
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'CA moyen par vente' =
+			DIVIDE ( [CA], [Nb ventes] )
+		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'Nb magasins actifs' =
+			DISTINCTCOUNT ( Ventes[ID magasin] )
+		formatString: #,0
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'CA moyen par magasin' =
+			DIVIDE ( [CA], [Nb magasins actifs] )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'CA moyen par jour' =
+			AVERAGEX ( VALUES ( Calendrier[Date] ), [CA] )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 1. Ventes et rentabilité
+
+	measure 'CA N-1' =
+			IF (
+			    HASONEVALUE ( Calendrier[Année] ),
+			    CALCULATE ( [CA], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+			)
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Évol. CA %' =
+			VAR _CAN1 = [CA N-1]
+			RETURN
+			    IF ( NOT ISBLANK ( _CAN1 ), DIVIDE ( [CA] - _CAN1, _CAN1 ) )
+		formatString: +0.0 %;-0.0 %;0.0 %
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Évol. CA % (hors lancements)' =
+			VAR _CAN1 = [CA N-1]
+			RETURN
+			    IF ( NOT ISBLANK ( _CAN1 ) && _CAN1 >= 0.25 * [CA], [Évol. CA %] )
+		formatString: +0.0 %;-0.0 %;0.0 %
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Marge brute N-1' =
+			IF (
+			    HASONEVALUE ( Calendrier[Année] ),
+			    CALCULATE ( [Marge brute], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+			)
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Évol. marge brute %' =
+			VAR _MargeN1 = [Marge brute N-1]
+			RETURN
+			    IF ( NOT ISBLANK ( _MargeN1 ), DIVIDE ( [Marge brute] - _MargeN1, _MargeN1 ) )
+		formatString: +0.0 %;-0.0 %;0.0 %
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Écart marge brute vs N-1' =
+			VAR _PeriodeN1Disponible =
+			    HASONEVALUE ( Calendrier[Année] )
+			        && NOT ISEMPTY (
+			            CALCULATETABLE (
+			                Ventes,
+			                SAMEPERIODLASTYEAR ( Calendrier[Date] ),
+			                REMOVEFILTERS ( Produits ),
+			                REMOVEFILTERS ( Magasins )
+			            )
+			        )
+			RETURN
+			    IF ( _PeriodeN1Disponible, [Marge brute] - [Marge brute N-1] )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Taux de marge N-1' =
+			IF (
+			    HASONEVALUE ( Calendrier[Année] ),
+			    CALCULATE ( [Taux de marge], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+			)
+		formatString: 0.0 %;-0.0 %;0.0 %
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Écart taux de marge (pts)' =
+			VAR _TauxN1 = [Taux de marge N-1]
+			RETURN
+			    IF ( NOT ISBLANK ( _TauxN1 ), ( [Taux de marge] - _TauxN1 ) * 100 )
+		formatString: +0.0;-0.0;0.0
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Unités vendues N-1' =
+			IF (
+			    HASONEVALUE ( Calendrier[Année] ),
+			    CALCULATE ( [Unités vendues], SAMEPERIODLASTYEAR ( Calendrier[Date] ) )
+			)
+		formatString: #,0
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Évol. unités %' =
+			VAR _UnitesN1 = [Unités vendues N-1]
+			RETURN
+			    IF ( NOT ISBLANK ( _UnitesN1 ), DIVIDE ( [Unités vendues] - _UnitesN1, _UnitesN1 ) )
+		formatString: +0.0 %;-0.0 %;0.0 %
+		displayFolder: 2. Comparaison N-1
+
+	measure 'Libellé évol. CA' =
+			VAR _Evol = [Évol. CA %]
+			RETURN
+			    IF (
+			        ISBLANK ( _Evol ),
+			        "Pas de période N-1 comparable",
+			        FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
+			    )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Libellé évol. marge brute' =
+			VAR _Evol = [Évol. marge brute %]
+			RETURN
+			    IF (
+			        ISBLANK ( _Evol ),
+			        "Pas de période N-1 comparable",
+			        FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
+			    )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Libellé écart taux de marge' =
+			VAR _Ecart = [Écart taux de marge (pts)]
+			RETURN
+			    IF (
+			        ISBLANK ( _Ecart ),
+			        "Pas de période N-1 comparable",
+			        FORMAT ( _Ecart, "+0.0;-0.0" ) & " pts vs N-1"
+			    )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Libellé évol. unités' =
+			VAR _Evol = [Évol. unités %]
+			RETURN
+			    IF (
+			        ISBLANK ( _Evol ),
+			        "Pas de période N-1 comparable",
+			        FORMAT ( _Evol, "+0.0 %;-0.0 %" ) & " vs N-1"
+			    )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur évol. CA' =
+			SWITCH (
+			    TRUE (),
+			    ISBLANK ( [Évol. CA %] ), "#898781",
+			    [Évol. CA %] < 0, "#D03B3B",
+			    "#006300"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur écart marge' =
+			SWITCH (
+			    TRUE (),
+			    ISBLANK ( [Écart marge brute vs N-1] ), "#898781",
+			    [Écart marge brute vs N-1] < 0, "#D03B3B",
+			    "#006300"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur évol. marge brute' =
+			SWITCH (
+			    TRUE (),
+			    ISBLANK ( [Évol. marge brute %] ), "#898781",
+			    [Évol. marge brute %] < 0, "#D03B3B",
+			    "#006300"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur écart taux de marge' =
+			SWITCH (
+			    TRUE (),
+			    ISBLANK ( [Écart taux de marge (pts)] ), "#898781",
+			    [Écart taux de marge (pts)] < 0, "#D03B3B",
+			    "#006300"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur évol. unités' =
+			SWITCH (
+			    TRUE (),
+			    ISBLANK ( [Évol. unités %] ), "#898781",
+			    [Évol. unités %] < 0, "#D03B3B",
+			    "#006300"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Vue par défaut' =
+			SELECTEDVALUE ( Calendrier[Année] ) = 2023
+			    && NOT ISFILTERED ( Produits[Catégorie] )
+			    && NOT ISFILTERED ( Magasins[Type d'emplacement] )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Vue par défaut stock' =
+			NOT ISFILTERED ( Produits[Catégorie] )
+			    && NOT ISFILTERED ( Magasins[Type d'emplacement] )
+			    && NOT ISFILTERED ( Stock[Statut stock] )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Titre CA mensuel' =
+			IF ( [Vue par défaut], "Le CA dépasse l'année précédente chaque mois", "CA mensuel : N vs N-1" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Titre cascade marge' =
+			IF ( [Vue par défaut], "Électronique : seule catégorie qui fait reculer la marge", "Écart de marge brute vs N-1 par catégorie" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Titre taux de marge' =
+			IF ( [Vue par défaut], "Le taux de marge recule dans 4 catégories sur 5", "Taux de marge par catégorie : N vs N-1" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Titre baisses de marge' =
+			IF ( [Vue par défaut], "Colorbuds concentre l'essentiel de la perte de marge", "Produits dont la marge brute recule le plus" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Titre emplacements' =
+			IF ( [Vue par défaut], "Un magasin d'aéroport rapporte 1,5 fois plus", "CA moyen par magasin selon l'emplacement" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Titre jours' =
+			IF ( [Vue par défaut], "Vendredi et samedi : pics d'activité", "CA moyen par jour de la semaine" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Titre statuts stock' =
+			IF ( [Vue par défaut stock], "Jouets et Arts créatifs concentrent les ruptures", "Répartition des références par statut" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur meilleur emplacement' =
+			VAR _Max =
+			    MAXX ( ALLSELECTED ( Magasins[Type d'emplacement] ), [CA moyen par magasin] )
+			RETURN
+			    IF ( [CA moyen par magasin] = _Max, "#2A78D6", "#B7D3F6" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur jours les plus forts' =
+			IF (
+			    RANKX ( ALLSELECTED ( Calendrier[Jour semaine] ), [CA moyen par jour], , DESC ) <= 2,
+			    "#2A78D6",
+			    "#B7D3F6"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur 3 premières villes' =
+			IF (
+			    RANKX ( ALLSELECTED ( Magasins[Ville] ), [CA], , DESC ) <= 3,
+			    "#2A78D6",
+			    "#B7D3F6"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Couleur statut stock' =
+			SWITCH (
+			    SELECTEDVALUE ( Stock[Statut stock] ),
+			    "Rupture", "#B42318",
+			    "Critique (< 7 j)", "#B54708",
+			    "#52514E"
+			)
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Période analysée' =
+			VAR _Debut = MIN ( Calendrier[Date] )
+			VAR _Fin = MAX ( Calendrier[Date] )
+			RETURN
+			    "Période : " & FORMAT ( _Debut, "dd/mm/yyyy" ) & " au " & FORMAT ( _Fin, "dd/mm/yyyy" )
+		displayFolder: 3. Libellés et couleurs
+
+	measure 'Date de référence stock' =
+			CALCULATE ( MAX ( Ventes[Date] ), REMOVEFILTERS () )
+		formatString: dd/mm/yyyy
+		displayFolder: 4. Stock
+
+	measure 'Stock disponible (unités)' =
+			SUM ( Stock[Stock disponible] )
+		formatString: #,0
+		displayFolder: 4. Stock
+
+	measure 'Valeur du stock' =
+			SUMX ( Stock, Stock[Stock disponible] * RELATED ( Produits[Coût unitaire] ) )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 4. Stock
+
+	measure 'Nb références' =
+			COUNTROWS ( Stock )
+		formatString: #,0
+		displayFolder: 4. Stock
+
+	measure 'Nb ruptures' =
+			CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Rupture" ) + 0
+		formatString: #,0
+		displayFolder: 4. Stock
+
+	measure 'Nb références critiques' =
+			CALCULATE ( COUNTROWS ( Stock ), Stock[Statut stock] = "Critique (< 7 j)" ) + 0
+		formatString: #,0
+		displayFolder: 4. Stock
+
+	measure '% références en rupture' =
+			DIVIDE ( [Nb ruptures], [Nb références] )
+		formatString: 0.0 %;-0.0 %;0.0 %
+		displayFolder: 4. Stock
+
+	measure 'Couverture moyenne (jours)' =
+			DIVIDE ( [Stock disponible (unités)], SUM ( Stock[Ventes moy. par jour] ) )
+		formatString: #,0.0
+		displayFolder: 4. Stock
+
+	measure 'CA potentiel perdu par jour' =
+			SUMX (
+			    FILTER ( Stock, Stock[Statut stock] = "Rupture" ),
+			    Stock[Ventes moy. par jour] * RELATED ( Produits[Prix unitaire] )
+			) + 0
+		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
+		displayFolder: 4. Stock
+
+	measure 'CA potentiel perdu sur 30 j' =
+			[CA potentiel perdu par jour] * 30
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 4. Stock
+
+	measure 'Valeur stock immobilisé' =
+			CALCULATE (
+			    [Valeur du stock],
+			    Stock[Statut stock] IN { "Surstock (> 90 j)", "Stock dormant" }
+			) + 0
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 4. Stock
+
+	measure '% stock immobilisé' =
+			DIVIDE ( [Valeur stock immobilisé], [Valeur du stock] )
+		formatString: 0.0 %;-0.0 %;0.0 %
+		displayFolder: 4. Stock
+
+	measure 'Libellé valeur du stock' =
+			FORMAT ( [Stock disponible (unités)], "#,##0" ) & " unités au "
+			    & FORMAT ( [Date de référence stock], "dd/mm/yyyy" )
+		displayFolder: 4. Stock
+
+	measure 'Libellé ruptures' =
+			FORMAT ( [% références en rupture], "0.0 %" ) & " des références + "
+			    & FORMAT ( [Nb références critiques], "#,##0" ) & " critiques"
+		displayFolder: 4. Stock
+
+	measure 'Libellé CA perdu' =
+			FORMAT ( [CA potentiel perdu par jour], "#,##0" ) & " $ par jour (estimation)"
+		displayFolder: 4. Stock
+
+	measure 'Libellé stock immobilisé' =
+			FORMAT ( [% stock immobilisé], "0.0 %" ) & " de la valeur du stock"
+		displayFolder: 4. Stock
+
+	measure 'Écart marge brute (10 plus fortes baisses)' =
+			VAR _Ecart = [Écart marge brute vs N-1]
+			VAR _Rang =
+			    RANKX ( ALLSELECTED ( Produits[Produit] ), [Écart marge brute vs N-1], , ASC )
+			RETURN
+			    IF ( _Ecart < 0 && _Rang <= 10, _Ecart )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 5. Classements
+
+	measure 'CA (10 premières villes)' =
+			VAR _Rang =
+			    RANKX ( ALLSELECTED ( Magasins[Ville] ), [CA], , DESC )
+			RETURN
+			    IF ( _Rang <= 10, [CA] )
+		formatString: #,0 \$;-#,0 \$;0 \$
+		displayFolder: 5. Classements
+
+	measure 'CA perdu par jour (10 premiers produits)' =
+			VAR _Perte = [CA potentiel perdu par jour]
+			VAR _Rang =
+			    RANKX ( ALLSELECTED ( Produits[Produit] ), [CA potentiel perdu par jour], , DESC )
+			RETURN
+			    IF ( _Perte > 0 && _Rang <= 10, _Perte )
+		formatString: #,0.00 \$;-#,0.00 \$;0.00 \$
+		displayFolder: 5. Classements
+
+	column Colonne1
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Colonne1
+
+		annotation SummarizationSetBy = User
+
+	partition _Mesures = m
+		mode: import
+		source =
+				#table(type table [Colonne1 = text], {})
+
+	annotation PBI_ResultType = Table

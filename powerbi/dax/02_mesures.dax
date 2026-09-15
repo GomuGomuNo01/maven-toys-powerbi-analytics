@@ -76,6 +76,13 @@ DEFINE
         RETURN
             IF ( NOT ISBLANK ( _CAN1 ), DIVIDE ( [CA] - _CAN1, _CAN1 ) )
 
+    // Évolution affichée dans les tableaux : masquée quand la base N-1 est inférieure
+    // à 25 % du CA (produits lancés en 2022). Un "+24 825 %" n'aide pas à décider.
+    MEASURE '_Mesures'[Évol. CA % (hors lancements)] =
+        VAR _CAN1 = [CA N-1]
+        RETURN
+            IF ( NOT ISBLANK ( _CAN1 ) && _CAN1 >= 0.25 * [CA], [Évol. CA %] )
+
     MEASURE '_Mesures'[Marge brute N-1] =
         IF (
             HASONEVALUE ( Calendrier[Année] ),
@@ -177,6 +184,103 @@ DEFINE
             "#006300"
         )
 
+    MEASURE '_Mesures'[Couleur écart marge] =
+        SWITCH (
+            TRUE (),
+            ISBLANK ( [Écart marge brute vs N-1] ), "#898781",
+            [Écart marge brute vs N-1] < 0, "#D03B3B",
+            "#006300"
+        )
+
+    // Couleurs des libellés d'évolution sous les cartes KPI (vert = hausse, rouge = baisse)
+    MEASURE '_Mesures'[Couleur évol. marge brute] =
+        SWITCH (
+            TRUE (),
+            ISBLANK ( [Évol. marge brute %] ), "#898781",
+            [Évol. marge brute %] < 0, "#D03B3B",
+            "#006300"
+        )
+
+    MEASURE '_Mesures'[Couleur écart taux de marge] =
+        SWITCH (
+            TRUE (),
+            ISBLANK ( [Écart taux de marge (pts)] ), "#898781",
+            [Écart taux de marge (pts)] < 0, "#D03B3B",
+            "#006300"
+        )
+
+    MEASURE '_Mesures'[Couleur évol. unités] =
+        SWITCH (
+            TRUE (),
+            ISBLANK ( [Évol. unités %] ), "#898781",
+            [Évol. unités %] < 0, "#D03B3B",
+            "#006300"
+        )
+
+    // Titres dynamiques : le message clé ne s'affiche que dans la vue analysée
+    // (2023, sans filtre catégorie ni emplacement). Dès qu'un filtre change le
+    // contexte, un titre neutre le remplace pour ne jamais afficher une affirmation fausse.
+    MEASURE '_Mesures'[Vue par défaut] =
+        SELECTEDVALUE ( Calendrier[Année] ) = 2023
+            && NOT ISFILTERED ( Produits[Catégorie] )
+            && NOT ISFILTERED ( Magasins[Type d'emplacement] )
+
+    MEASURE '_Mesures'[Vue par défaut stock] =
+        NOT ISFILTERED ( Produits[Catégorie] )
+            && NOT ISFILTERED ( Magasins[Type d'emplacement] )
+            && NOT ISFILTERED ( Stock[Statut stock] )
+
+    MEASURE '_Mesures'[Titre CA mensuel] =
+        IF ( [Vue par défaut], "Le CA dépasse l'année précédente chaque mois", "CA mensuel : N vs N-1" )
+
+    MEASURE '_Mesures'[Titre cascade marge] =
+        IF ( [Vue par défaut], "Électronique : seule catégorie qui fait reculer la marge", "Écart de marge brute vs N-1 par catégorie" )
+
+    MEASURE '_Mesures'[Titre taux de marge] =
+        IF ( [Vue par défaut], "Le taux de marge recule dans 4 catégories sur 5", "Taux de marge par catégorie : N vs N-1" )
+
+    MEASURE '_Mesures'[Titre baisses de marge] =
+        IF ( [Vue par défaut], "Colorbuds concentre l'essentiel de la perte de marge", "Produits dont la marge brute recule le plus" )
+
+    MEASURE '_Mesures'[Titre emplacements] =
+        IF ( [Vue par défaut], "Un magasin d'aéroport rapporte 1,5 fois plus", "CA moyen par magasin selon l'emplacement" )
+
+    MEASURE '_Mesures'[Titre jours] =
+        IF ( [Vue par défaut], "Vendredi et samedi : pics d'activité", "CA moyen par jour de la semaine" )
+
+    MEASURE '_Mesures'[Titre statuts stock] =
+        IF ( [Vue par défaut stock], "Jouets et Arts créatifs concentrent les ruptures", "Répartition des références par statut" )
+
+    // Mise en évidence calculée : la couleur suit les données filtrées, pas un nom figé
+    MEASURE '_Mesures'[Couleur meilleur emplacement] =
+        VAR _Max =
+            MAXX ( ALLSELECTED ( Magasins[Type d'emplacement] ), [CA moyen par magasin] )
+        RETURN
+            IF ( [CA moyen par magasin] = _Max, "#2A78D6", "#B7D3F6" )
+
+    MEASURE '_Mesures'[Couleur jours les plus forts] =
+        IF (
+            RANKX ( ALLSELECTED ( Calendrier[Jour semaine] ), [CA moyen par jour], , DESC ) <= 2,
+            "#2A78D6",
+            "#B7D3F6"
+        )
+
+    MEASURE '_Mesures'[Couleur 3 premières villes] =
+        IF (
+            RANKX ( ALLSELECTED ( Magasins[Ville] ), [CA], , DESC ) <= 3,
+            "#2A78D6",
+            "#B7D3F6"
+        )
+
+    // Couleur du texte de statut dans la liste des références à traiter
+    MEASURE '_Mesures'[Couleur statut stock] =
+        SWITCH (
+            SELECTEDVALUE ( Stock[Statut stock] ),
+            "Rupture", "#B42318",
+            "Critique (< 7 j)", "#B54708",
+            "#52514E"
+        )
+
     MEASURE '_Mesures'[Période analysée] =
         VAR _Debut = MIN ( Calendrier[Date] )
         VAR _Fin = MAX ( Calendrier[Date] )
@@ -235,6 +339,47 @@ DEFINE
 
     MEASURE '_Mesures'[% stock immobilisé] =
         DIVIDE ( [Valeur stock immobilisé], [Valeur du stock] )
+
+    MEASURE '_Mesures'[Libellé valeur du stock] =
+        FORMAT ( [Stock disponible (unités)], "#,##0" ) & " unités au "
+            & FORMAT ( [Date de référence stock], "dd/mm/yyyy" )
+
+    MEASURE '_Mesures'[Libellé ruptures] =
+        FORMAT ( [% références en rupture], "0.0 %" ) & " des références + "
+            & FORMAT ( [Nb références critiques], "#,##0" ) & " critiques"
+
+    MEASURE '_Mesures'[Libellé CA perdu] =
+        FORMAT ( [CA potentiel perdu par jour], "#,##0" ) & " $ par jour (estimation)"
+
+    MEASURE '_Mesures'[Libellé stock immobilisé] =
+        FORMAT ( [% stock immobilisé], "0.0 %" ) & " de la valeur du stock"
+
+    // -------------------------------------------------------------------------
+    // 5. CLASSEMENTS (TOP 10)
+    // -------------------------------------------------------------------------
+    // Alternative au filtre "N premiers" : la mesure renvoie un vide hors du
+    // top 10, et le visuel masque automatiquement les lignes vides.
+    // ALLSELECTED respecte les segments de la page (ex. une catégorie).
+
+    MEASURE '_Mesures'[Écart marge brute (10 plus fortes baisses)] =
+        VAR _Ecart = [Écart marge brute vs N-1]
+        VAR _Rang =
+            RANKX ( ALLSELECTED ( Produits[Produit] ), [Écart marge brute vs N-1], , ASC )
+        RETURN
+            IF ( _Ecart < 0 && _Rang <= 10, _Ecart )
+
+    MEASURE '_Mesures'[CA (10 premières villes)] =
+        VAR _Rang =
+            RANKX ( ALLSELECTED ( Magasins[Ville] ), [CA], , DESC )
+        RETURN
+            IF ( _Rang <= 10, [CA] )
+
+    MEASURE '_Mesures'[CA perdu par jour (10 premiers produits)] =
+        VAR _Perte = [CA potentiel perdu par jour]
+        VAR _Rang =
+            RANKX ( ALLSELECTED ( Produits[Produit] ), [CA potentiel perdu par jour], , DESC )
+        RETURN
+            IF ( _Perte > 0 && _Rang <= 10, _Perte )
 
 
 // =============================================================================

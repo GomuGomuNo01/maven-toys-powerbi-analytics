@@ -1,0 +1,118 @@
+table Calendrier
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isKey
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Année'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Année
+
+		annotation SummarizationSetBy = User
+
+	column 'N° mois'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: N° mois
+
+		annotation SummarizationSetBy = User
+
+	column Mois
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Mois
+		sortByColumn: 'N° mois'
+
+		annotation SummarizationSetBy = User
+
+	column Trimestre
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Trimestre
+
+		annotation SummarizationSetBy = User
+
+	column 'Clé année-mois'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Clé année-mois
+
+		annotation SummarizationSetBy = User
+
+	column 'Mois-année'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Mois-année
+		sortByColumn: 'Clé année-mois'
+
+		annotation SummarizationSetBy = User
+
+	column 'N° jour semaine'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: N° jour semaine
+
+		annotation SummarizationSetBy = User
+
+	column 'Jour semaine'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Jour semaine
+		sortByColumn: 'N° jour semaine'
+
+		annotation SummarizationSetBy = User
+
+	partition Calendrier = m
+		mode: import
+		source =
+				// Requête : Calendrier (dimension de dates)
+				// Grain : une ligne = un jour, du 01/01/2022 au 30/09/2023, sans trou
+				// Une table de dates dédiée est indispensable aux fonctions de comparaison
+				// temporelle DAX (ex. SAMEPERIODLASTYEAR).
+				let
+				    Source = Csv.Document(
+				        File.Contents(DossierDonnees & "calendar.csv"),
+				        [Delimiter = ",", Columns = 1, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
+				    ),
+				    EntetesPromues = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // Format source "1/31/2022" (mois/jour/année) : la culture "en-US" est obligatoire,
+				    // sinon Windows en français lit "jour/mois" et produit des erreurs ou des dates fausses
+				    TypeDate = Table.TransformColumnTypes(EntetesPromues, {{"Date", type date}}, "en-US"),
+				    AjoutAnnee = Table.AddColumn(TypeDate, "Année", each Date.Year([Date]), Int64.Type),
+				    AjoutNumMois = Table.AddColumn(AjoutAnnee, "N° mois", each Date.Month([Date]), Int64.Type),
+				    AjoutMois = Table.AddColumn(
+				        AjoutNumMois, "Mois", each Text.Proper(Date.ToText([Date], [Format = "MMM", Culture = "fr-FR"])), type text
+				    ),
+				    AjoutTrimestre = Table.AddColumn(AjoutMois, "Trimestre", each "T" & Text.From(Date.QuarterOfYear([Date])), type text),
+				    // Syntaxe #"..." obligatoire : le caractère ° n'est pas autorisé dans un nom de champ simple
+				    AjoutCleMois = Table.AddColumn(AjoutTrimestre, "Clé année-mois", each [Année] * 100 + [#"N° mois"], Int64.Type),
+				    AjoutMoisAnnee = Table.AddColumn(
+				        AjoutCleMois, "Mois-année", each [Mois] & " " & Text.From([Année]), type text
+				    ),
+				    // Lundi = 1 ... Dimanche = 7 (convention française)
+				    AjoutNumJour = Table.AddColumn(
+				        AjoutMoisAnnee, "N° jour semaine", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type
+				    ),
+				    AjoutJour = Table.AddColumn(
+				        AjoutNumJour, "Jour semaine", each Text.Proper(Date.DayOfWeekName([Date], "fr-FR")), type text
+				    )
+				in
+				    AjoutJour
+
+	annotation PBI_ResultType = Table

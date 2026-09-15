@@ -1,0 +1,3 @@
+expression DossierDonnees = "D:\PROJET PERSO\DATA\BI Dashboard (Power BI )\maven-toys-powerbi-analytics\data\raw\" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+
+	annotation PBI_ResultType = Text

@@ -1,0 +1,210 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "constats",
+  "position": {
+    "x": 644,
+    "y": 458,
+    "z": 16,
+    "height": 250,
+    "width": 620,
+    "tabOrder": 16
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "À retenir (janv.-sept. 2023 vs 2022)",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "1. Croissance moins rentable : ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "CA ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  },
+                  {
+                    "value": "+30,9 %",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " mais marge brute ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  },
+                  {
+                    "value": "+16,0 %",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " seulement.",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "2. Effet mix : ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "Arts créatifs triple son CA avec des produits peu margés (Magic Sand : ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  },
+                  {
+                    "value": "12,5 %",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " de marge).",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "3. Électronique : ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "Colorbuds, produit le plus rentable, perd ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  },
+                  {
+                    "value": "264 k$",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " de marge (volumes -60 % en 18 mois, sans rupture).",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Priorité : ",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#0B0B0B",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "protéger la marge et relancer l'électronique avant le pic de décembre.",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#52514E"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

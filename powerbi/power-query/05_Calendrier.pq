@@ -19,7 +19,8 @@ let
         AjoutNumMois, "Mois", each Text.Proper(Date.ToText([Date], [Format = "MMM", Culture = "fr-FR"])), type text
     ),
     AjoutTrimestre = Table.AddColumn(AjoutMois, "Trimestre", each "T" & Text.From(Date.QuarterOfYear([Date])), type text),
-    AjoutCleMois = Table.AddColumn(AjoutTrimestre, "Clé année-mois", each [Année] * 100 + [N° mois], Int64.Type),
+    // Syntaxe #"..." obligatoire : le caractère ° n'est pas autorisé dans un nom de champ simple
+    AjoutCleMois = Table.AddColumn(AjoutTrimestre, "Clé année-mois", each [Année] * 100 + [#"N° mois"], Int64.Type),
     AjoutMoisAnnee = Table.AddColumn(
         AjoutCleMois, "Mois-année", each [Mois] & " " & Text.From([Année]), type text
     ),

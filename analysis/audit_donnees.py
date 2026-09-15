@@ -191,6 +191,14 @@ def indicateurs_ventes(detail: pd.DataFrame) -> None:
     emplacement["Évol. CA % (janv.-sept.)"] = evol
     print(emplacement.sort_values("CA_par_magasin", ascending=False).round(3).to_string())
 
+    # Vue par défaut du rapport Power BI : janvier-septembre 2023
+    print("\nPar type d'emplacement (janv.-sept. 2023, vue par défaut du rapport) :")
+    annee = detail[detail["Annee"] == 2023]
+    emplacement_2023 = agreger(annee, "Emplacement")
+    emplacement_2023["CA_par_magasin"] = emplacement_2023["CA"] / annee.groupby("Emplacement")["Store_ID"].nunique()
+    emplacement_2023["Part CA"] = emplacement_2023["CA"] / emplacement_2023["CA"].sum()
+    print(emplacement_2023.sort_values("CA_par_magasin", ascending=False)[["CA", "CA_par_magasin", "Part CA"]].round(3).to_string())
+
     print("\nVilles (top 5 CA) :")
     villes = agreger(detail, "Store_City").sort_values("CA", ascending=False)
     villes["Part CA"] = villes["CA"] / villes["CA"].sum()
@@ -205,11 +213,13 @@ def indicateurs_ventes(detail: pd.DataFrame) -> None:
     mensuel = detail.pivot_table(index="Mois", columns="Annee", values="CA", aggfunc="sum")
     print(mensuel.round(0).to_string())
 
-    print("\nCA moyen par jour selon le jour de la semaine :")
-    jours = detail.groupby(detail["Date"].dt.dayofweek).agg(CA=("CA", "sum"), Jours=("Date", "nunique"))
-    jours["CA_par_jour"] = jours["CA"] / jours["Jours"]
-    jours.index = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-    print(jours["CA_par_jour"].round(0).to_string())
+    print("\nCA moyen par jour selon le jour de la semaine (toute la période | janv.-sept. 2023) :")
+    noms_jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+    resultats = {}
+    for libelle, table in [("Toute la période", detail), ("Janv.-sept. 2023", detail[detail["Annee"] == 2023])]:
+        jours = table.groupby(table["Date"].dt.dayofweek).agg(CA=("CA", "sum"), Jours=("Date", "nunique"))
+        resultats[libelle] = (jours["CA"] / jours["Jours"]).set_axis(noms_jours)
+    print(pd.DataFrame(resultats).round(0).to_string())
 
 
 def indicateurs_stock(ventes, stock, produits, magasins) -> None:

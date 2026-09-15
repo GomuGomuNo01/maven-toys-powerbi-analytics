@@ -1,13 +1,14 @@
 # Maven Toys : pilotage de la performance commerciale et des stocks
 
 ![Power BI](https://img.shields.io/badge/Power%20BI-Desktop-F2C811?logo=powerbi&logoColor=black)
-![DAX](https://img.shields.io/badge/DAX-37%20mesures-2A78D6)
+![Format](https://img.shields.io/badge/Format-PBIP%20(TMDL%20%2B%20PBIR)-6D597A)
+![DAX](https://img.shields.io/badge/DAX-62%20mesures-2A78D6)
 ![Power Query](https://img.shields.io/badge/Power%20Query-M-1BAF7A)
 ![Python](https://img.shields.io/badge/Python-pandas-3776AB?logo=python&logoColor=white)
 
 Analyse de 829 262 ventes d'une enseigne de 50 magasins de jouets pour répondre à une question de direction : **la croissance est-elle rentable, et où agir en priorité avant la fin d'année ?**
 
-![Aperçu du rapport : page Synthèse](docs/images/01_synthese.png)
+![Page Synthèse du rapport Power BI](docs/images/01_synthese.png)
 
 ---
 
@@ -16,10 +17,11 @@ Analyse de 829 262 ventes d'une enseigne de 50 magasins de jouets pour répondre
 | | |
 |---|---|
 | **Problématique** | La croissance 2023 est-elle rentable et durable, et où agir en priorité (produits, magasins, stocks) ? |
-| **Livrable** | Rapport Power BI de 4 pages, script Python de contrôle qualité, synthèse et recommandations |
+| **Livrables** | Rapport Power BI de 4 pages (49 visuels), script Python de contrôle qualité, synthèse et recommandations |
 | **Résultat principal** | CA **+30,9 %** mais marge brute **+16,0 %** seulement : taux de marge **-3,3 pts**, entièrement dû au mix produits |
-| **Impact chiffré** | **29 000 $** de CA perdu par mois à cause des ruptures, **49 000 $** de stock immobilisé |
-| **Compétences** | Cadrage métier, audit qualité, Power Query, modélisation en étoile, DAX (time intelligence), data storytelling, recommandations |
+| **Impact chiffré** | **29 069 $** de CA perdu par mois à cause des ruptures, **49 246 $** de stock immobilisé |
+| **Fiabilité** | 19 indicateurs comparés automatiquement entre Power BI et un calcul Python indépendant : **0 écart** |
+| **Compétences** | Cadrage métier, audit qualité, Power Query, modélisation en étoile, DAX (time intelligence), data storytelling, versionnage Git d'un projet Power BI |
 
 ---
 
@@ -78,7 +80,7 @@ Source : jeu de données **Mexico Toy Sales** de [Maven Analytics](https://maven
 | Table | Lignes | Contenu | Rôle |
 |---|---:|---|---|
 | Ventes | 829 262 | Date, magasin, produit, unités (janv. 2022 à sept. 2023) | Faits |
-| Stock | 1 593 | Stock par magasin et produit (photo à date) | Faits |
+| Stock | 1 593 | Stock par magasin et produit (photo au 30/09/2023) | Faits |
 | Produits | 35 | Nom, catégorie, coût, prix | Dimension |
 | Magasins | 50 | Nom, ville, type d'emplacement, date d'ouverture | Dimension |
 | Calendrier | 638 | Un jour par ligne | Dimension |
@@ -110,9 +112,9 @@ flowchart LR
 | 1. Cadrage | Parties prenantes, problématique, 4 questions, 8 KPI, règles de gestion | Construire un rapport qui répond à des décisions |
 | 2. Audit qualité | Script Python : complétude, doublons, intégrité, formats, périmètre | Ne pas bâtir d'indicateurs sur des données mal comprises |
 | 3. Préparation | Nettoyage des prix, culture `en-US`, correction de la ville, traduction des libellés, suppression d'une colonne inutile, paramètre de chemin | Rendre le traitement fiable, reproductible et portable |
-| 4. Modélisation | Schéma en étoile, relations à sens unique, table de dates marquée | Des filtres prévisibles et des calculs N-1 corrects |
-| 5. Mesures DAX | 37 mesures et 5 colonnes calculées, contrôlées par rapport au script Python | Garantir la justesse des chiffres avant publication |
-| 6. Rapport | 4 pages orientées questions, thème accessible, navigation | Rendre l'analyse lisible par un public non technique |
+| 4. Modélisation | Schéma en étoile à deux tables de faits, relations à sens unique, table de dates marquée | Des filtres prévisibles et des calculs N-1 corrects |
+| 5. Mesures DAX | 62 mesures et 5 colonnes calculées, réconciliées avec le script Python | Garantir la justesse des chiffres avant publication |
+| 6. Rapport | 4 pages orientées questions, 49 visuels, thème accessible, navigation | Rendre l'analyse lisible par un public non technique |
 | 7. Analyse | Enseignements, recommandations priorisées, limites | Transformer les chiffres en décisions |
 
 **Choix méthodologiques importants**
@@ -123,15 +125,28 @@ flowchart LR
 - **Risque de stock** : couverture = stock / ventes journalières des 90 derniers jours ; seuils de 7 et 90 jours.
 - **Réconciliation** : chaque KPI du rapport est comparé à une valeur calculée indépendamment en Python.
 
+**Contrôle qualité du rapport (extrait)**
+
+| Indicateur (janv.-sept. 2023) | Python | Power BI | Statut |
+|---|---:|---:|:---:|
+| Chiffre d'affaires | 6 962 074,27 $ | 6 962 074,27 $ | ✅ |
+| Écart de marge brute Électronique | -210 260 $ | -210 260 $ | ✅ |
+| Références en rupture | 77 | 77 | ✅ |
+| Valeur du stock immobilisé | 49 246,17 $ | 49 246,17 $ | ✅ |
+| Filtre « Électronique » appliqué dans le rapport | 4 ruptures | 4 ruptures | ✅ |
+
+Tableau complet et cas limites testés : [docs/03_guide_power_bi.md](docs/03_guide_power_bi.md#étape-9--contrôle-qualité-15-min)
+
 ## 5. Outils et technologies
 
 | Outil | Usage |
 |---|---|
 | **Power BI Desktop** | Rapport interactif |
 | **Power Query (M)** | Import, nettoyage et transformation des données |
-| **DAX** | Mesures, comparaisons temporelles, colonnes calculées, vue Requête DAX pour les tests |
+| **DAX** | Mesures, comparaisons temporelles, classements, colonnes calculées |
+| **Projet Power BI (PBIP)** | Modèle (TMDL) et rapport (PBIR) enregistrés en fichiers texte, versionnables |
 | **Python (pandas)** | Audit de qualité et calcul des valeurs de référence |
-| **Git / GitHub** | Versionnage du code, de la documentation et du rapport |
+| **Git / GitHub** | Versionnage du code, du rapport et de la documentation |
 | **IntelliJ IDEA** | Édition des scripts et de la documentation |
 
 ## 6. Modèle de données et mesures
@@ -152,24 +167,49 @@ Deux tables de faits partagent les dimensions `Produits` et `Magasins` : un mêm
 | Ventes et rentabilité | CA, Marge brute, Taux de marge, CA moyen par magasin |
 | Comparaison N-1 | CA N-1, Évol. CA %, Écart marge brute vs N-1, Écart taux de marge (pts) |
 | Stock | Valeur du stock, Nb ruptures, CA potentiel perdu, Valeur stock immobilisé |
-| Libellés dynamiques | Libellé évol. CA (« +30,9 % vs N-1 »), couleurs conditionnelles |
+| Classements | Écart marge brute (10 plus fortes baisses), CA (10 premières villes) |
+| Libellés et couleurs | Libellé évol. CA (« +30,9 % vs N-1 »), couleurs vert / rouge des évolutions, couleur du statut de stock |
+| Titres dynamiques et mises en évidence | Titre CA mensuel (message clé ou titre neutre selon les filtres), Couleur meilleur emplacement |
 
-Code source lisible : [requêtes Power Query](powerbi/power-query), [mesures et colonnes DAX](powerbi/dax), [thème](powerbi/theme/maven-toys-theme.json).
+Code source lisible : [requêtes Power Query](powerbi/power-query), [mesures et colonnes DAX](powerbi/dax), [modèle TMDL](powerbi/MavenToys_Pilotage.SemanticModel/definition), [thème](powerbi/theme/maven-toys-theme.json).
 
 ## 7. Le rapport Power BI
 
-Fichier : [`powerbi/MavenToys_Pilotage.pbix`](powerbi/MavenToys_Pilotage.pbix)
+Projet : [`powerbi/MavenToys_Pilotage.pbip`](powerbi/MavenToys_Pilotage.pbip). Toutes les captures montrent la vue par défaut : **janvier-septembre 2023 comparé à la même période 2022**.
 
-| Page | Question | Contenu |
-|---|---|---|
-| **Synthèse** | Comment évolue la performance ? | KPI avec évolution N-1, CA mensuel N vs N-1, cascade de l'écart de marge par catégorie, taux de marge par catégorie |
-| **Produits** | Quels produits font varier la marge ? | Matrice volume / rentabilité, produits en plus forte baisse, détail avec mise en forme conditionnelle |
-| **Magasins** | Quels magasins performent le mieux ? | CA moyen par magasin par emplacement, activité par jour de la semaine, matrice des magasins, top villes |
-| **Stocks** | Où sont les risques de stock ? | Ruptures, CA perdu, stock immobilisé, statut par catégorie, liste des références prioritaires |
+**Principes de conception**
 
-| Produits | Magasins | Stocks |
-|---|---|---|
-| ![Produits](docs/images/02_produits.png) | ![Magasins](docs/images/03_magasins.png) | ![Stocks](docs/images/04_stocks.png) |
+| Principe | Mise en œuvre |
+|---|---|
+| Lecture en Z | KPI en haut, explications au milieu, détail en bas, sur les 4 pages |
+| Hiérarchie des KPI | Intitulé discret, valeur dominante, évolution colorée (vert = hausse, rouge = baisse) |
+| Une couleur = un sens | Bleu pour l'année analysée, gris pour N-1 (pointillés sur les courbes), rouge réservé aux signaux négatifs |
+| Mise en évidence | Seul l'élément qui porte le message est en couleur soutenue (meilleur emplacement, jours les plus forts), calculé par DAX pour rester juste quand on filtre |
+| Titres qui disent quelque chose | Titres affirmatifs dans la vue analysée, remplacés automatiquement par un titre neutre dès qu'un filtre change le contexte |
+| Tableaux lisibles | En-têtes marqués, colonnes réparties sur toute la largeur, évolutions non significatives masquées, tri par urgence |
+| Accessibilité | Palette testée pour le daltonisme, textes alternatifs sur les graphiques |
+
+### Synthèse : comment évolue la performance ?
+
+Cartes KPI avec évolution vs N-1, CA mensuel N vs N-1, cascade de l'écart de marge par catégorie, taux de marge par catégorie et constats clés (capture en haut de page).
+
+### Produits : quels produits font varier la marge ?
+
+![Page Produits](docs/images/02_produits.png)
+
+Matrice volume / rentabilité des 35 produits, 10 plus fortes baisses de marge, détail avec mise en forme conditionnelle.
+
+### Magasins : quels magasins performent le mieux ?
+
+![Page Magasins](docs/images/03_magasins.png)
+
+CA moyen par magasin selon l'emplacement, activité par jour de la semaine, magasins classés par évolution, top 10 des villes.
+
+### Stocks : où sont les risques ?
+
+![Page Stocks](docs/images/04_stocks.png)
+
+Photo au 30/09/2023 : ruptures, CA potentiel perdu, stock immobilisé, statut des références par catégorie et liste des références à traiter en priorité.
 
 Guide de construction pas à pas : [docs/03_guide_power_bi.md](docs/03_guide_power_bi.md)
 
@@ -188,6 +228,7 @@ Guide de construction pas à pas : [docs/03_guide_power_bi.md](docs/03_guide_pow
 
 | Indicateur | Valeur |
 |---|---:|
+| Valeur du stock (coût d'achat) | 300 210 $ |
 | Références en rupture | 77 (4,8 %) |
 | Références critiques (moins de 7 jours de stock) | 289 (18,1 %) |
 | CA potentiel perdu sur 30 jours | 29 069 $ |
@@ -196,11 +237,11 @@ Guide de construction pas à pas : [docs/03_guide_power_bi.md](docs/03_guide_pow
 ## 9. Enseignements
 
 1. **La croissance dilue la rentabilité.** Le CA progresse deux fois plus vite que la marge. Les prix étant fixes, la baisse du taux de marge est un pur effet mix : -1,6 pt entre catégories, -1,8 pt au sein des catégories.
-2. **Arts créatifs porte la croissance, mais à faible marge.** CA multiplié par 3,5 (+335 745 $ de marge), tiré par Magic Sand : +865 000 $ de CA à seulement 12,5 % de marge.
-3. **L'électronique détruit 210 000 $ de marge.** Colorbuds, produit le plus rentable de l'enseigne (20,8 % de la marge totale), a perdu 60 % de ses volumes en 18 mois, sans aucune rupture de stock : c'est un problème de demande.
-4. **Les aéroports sont le format le plus productif.** 430 000 $ par magasin, soit 1,5 fois plus que les autres emplacements, et la plus forte croissance (+37,5 %). Le poids du centre-ville (57 % du CA) s'explique par son nombre de magasins, pas par sa performance.
+2. **Arts créatifs porte la croissance, mais à faible marge.** CA multiplié par 3,5 (+335 745 $ de marge), tiré par Magic Sand : 868 849 $ de CA en 2023 à seulement 12,5 % de marge.
+3. **L'électronique fait perdre 210 260 $ de marge.** Colorbuds, produit le plus rentable de l'enseigne (53 % de taux de marge, 20,8 % de la marge totale sur la période), a perdu 60 % de ses volumes en 18 mois, sans aucune rupture de stock : c'est un problème de demande.
+4. **Les aéroports sont le format le plus productif.** 213 156 $ par magasin en 2023, soit 1,5 fois un magasin de centre-ville (137 670 $), et la plus forte croissance (+37,5 %). Le poids du centre-ville (57 % du CA) s'explique par son nombre de magasins, pas par sa performance.
 5. **47 magasins sur 50 progressent.** Monterrey 1 est le seul recul marqué (-16,6 %).
-6. **Le vendredi et le samedi font 1,8 fois le CA du lundi.**
+6. **Le samedi génère 1,9 fois le CA du lundi** (35 764 $ contre 19 172 $ par jour en 2023).
 7. **Les stocks sont mal répartis.** Playfoam, lancé mi-août 2023, est déjà en rupture ou critique dans 27 magasins sur 49, alors que Dinosaur Figures ou PlayDoh Playset dorment en rayon.
 
 Analyse complète : [docs/04_resultats_recommandations.md](docs/04_resultats_recommandations.md)
@@ -227,13 +268,15 @@ Analyse complète : [docs/04_resultats_recommandations.md](docs/04_resultats_rec
 - **41 couples magasin x produit vendus mais absents de l'inventaire** : risque non mesuré.
 - **Marge brute uniquement** : pas de loyers ni de salaires, donc pas de rentabilité nette par magasin.
 - **Seuils de stock (7 et 90 jours) hypothétiques** : à valider avec les délais réels de réapprovisionnement.
+- **Évolutions en % extrêmes pour les produits récents** (Magic Sand : +24 825 %) : l'écart en valeur fait référence ; le détail produits masque ces évolutions non significatives.
+- **Bloc « À retenir » en texte fixe** : il décrit janvier-septembre 2023 et ne change pas avec les filtres (les titres des graphiques, eux, s'adaptent).
 
 ## 12. Pistes d'amélioration
 
 - Prévision des ventes du 4e trimestre pour dimensionner les commandes.
 - Analyse ABC des produits et suivi dédié des lancements.
 - Publication sur Power BI Service avec actualisation planifiée et sécurité par ligne (un directeur ne voit que son magasin).
-- Format PBIP pour versionner chaque modification du rapport dans Git.
+- Intégration continue : validation automatique du modèle et du rapport à chaque commit.
 - Alimentation depuis une base SQL plutôt que des fichiers CSV.
 
 ## 13. Compétences démontrées
@@ -244,31 +287,35 @@ Analyse complète : [docs/04_resultats_recommandations.md](docs/04_resultats_rec
 | Qualité des données | Audit reproductible, anomalies documentées et traitées |
 | Préparation des données | Power Query : nettoyage, typage avec culture, paramètre, optimisation du modèle |
 | Modélisation | Schéma en étoile à deux tables de faits, table de dates, relations maîtrisées |
-| DAX | `CALCULATE`, `SUMX` / `RELATED`, `SAMEPERIODLASTYEAR`, variables, gestion des cas limites |
+| DAX | `CALCULATE`, `SUMX` / `RELATED`, `SAMEPERIODLASTYEAR`, `RANKX`, `ALLSELECTED`, `ISFILTERED`, variables, gestion des cas limites |
+| Mise en forme conditionnelle | Titres, couleurs de barres et de textes pilotés par des mesures DAX |
 | Esprit critique | Correction d'erreurs d'interprétation de la version initiale (effet de taille, année partielle) |
-| Rigueur | Réconciliation systématique des KPI entre Power BI et Python |
+| Rigueur | Réconciliation systématique des KPI entre Power BI et Python, tests de cas limites |
 | Data visualisation | Choix des graphiques par question, palette accessible, titres porteurs de sens |
+| Travail en mode projet | Rapport au format PBIP versionné dans Git, branches `dev` et `main` |
 | Communication | Synthèse pour la direction, recommandations priorisées et mesurables, limites assumées |
 
 ## 14. Structure du dépôt et reproduction
 
 ```text
 maven-toys-powerbi-analytics/
-├── data/raw/                    Données sources (CSV) et dictionnaire des données
+├── data/raw/                              Données sources (CSV) et dictionnaire des données
 ├── analysis/
-│   ├── audit_donnees.py         Audit qualité et valeurs de référence
+│   ├── audit_donnees.py                   Audit qualité et valeurs de référence
 │   └── requirements.txt
 ├── powerbi/
-│   ├── MavenToys_Pilotage.pbix  Rapport Power BI
-│   ├── power-query/             Requêtes M commentées
-│   ├── dax/                     Colonnes calculées et mesures commentées
-│   └── theme/                   Thème Power BI (JSON)
+│   ├── MavenToys_Pilotage.pbip            Point d'entrée du rapport (à ouvrir dans Power BI Desktop)
+│   ├── MavenToys_Pilotage.SemanticModel/  Modèle : tables, relations, mesures (TMDL)
+│   ├── MavenToys_Pilotage.Report/         Rapport : pages et visuels (PBIR)
+│   ├── power-query/                       Requêtes M commentées
+│   ├── dax/                               Colonnes calculées et mesures commentées
+│   └── theme/                             Thème Power BI (JSON)
 └── docs/
     ├── 01_cadrage_besoin.md
     ├── 02_qualite_donnees.md
     ├── 03_guide_power_bi.md
     ├── 04_resultats_recommandations.md
-    └── images/                  Captures du rapport
+    └── images/                            Captures du rapport
 ```
 
 **Reproduire l'analyse**
@@ -284,8 +331,9 @@ pip install -r analysis/requirements.txt
 python analysis/audit_donnees.py
 ```
 
-3. Ouvrir `powerbi/MavenToys_Pilotage.pbix` dans Power BI Desktop.
-4. **Transformer les données > Modifier les paramètres** : indiquer le chemin local du dossier `data/raw/` (terminé par `\`), puis **Actualiser**.
+3. Ouvrir `powerbi/MavenToys_Pilotage.pbip` dans Power BI Desktop (version de juillet 2026 ou plus récente).
+4. **Accueil > Transformer les données > Modifier les paramètres** : indiquer le chemin local du dossier `data/raw/` (terminé par `\`).
+5. Cliquer sur **Actualiser maintenant**. Dans Power BI Desktop, les boutons de navigation du rapport s'utilisent avec **Ctrl + clic**.
 
 ---
 

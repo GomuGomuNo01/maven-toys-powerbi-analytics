@@ -5,6 +5,25 @@
 >
 > Durée estimée : 4 à 6 heures, pauses comprises.
 
+## Le rapport final est déjà dans le dépôt
+
+Le rapport terminé est fourni au format **projet Power BI (PBIP)** : [`powerbi/MavenToys_Pilotage.pbip`](../powerbi/MavenToys_Pilotage.pbip).
+
+| Dossier | Contenu | Format |
+|---|---|---|
+| `MavenToys_Pilotage.SemanticModel/` | Modèle : tables, requêtes M, relations, 62 mesures, colonnes calculées | TMDL (texte) |
+| `MavenToys_Pilotage.Report/` | Rapport : 4 pages, 49 visuels, thème | PBIR (JSON) |
+
+**Pourquoi PBIP plutôt que `.pbix` ?** Un `.pbix` est un fichier binaire : Git ne voit pas ce qui a changé. Avec PBIP, chaque mesure et chaque visuel est un fichier texte : on peut relire une modification, la commenter ou revenir en arrière, comme pour du code. C'est le format recommandé par Microsoft pour travailler en équipe.
+
+**Ouvrir le rapport fourni**
+
+1. Double-cliquer sur `powerbi/MavenToys_Pilotage.pbip`.
+2. **Accueil > Transformer les données > Modifier les paramètres** : indiquer le chemin local de `data\raw\` (terminé par `\`).
+3. Cliquer sur **Actualiser maintenant** dans le bandeau jaune (les données ne sont pas stockées dans le dépôt).
+
+**Utiliser ce guide** pour comprendre chaque choix, ou pour reconstruire le rapport vous-même dans un fichier d'entraînement : c'est le meilleur moyen de pouvoir l'expliquer en entretien.
+
 ## Sommaire
 
 0. [Préparation](#étape-0--préparation-5-min)
@@ -41,7 +60,7 @@ python analysis/audit_donnees.py
 **À faire**
 
 1. Ouvrir Power BI Desktop > **Nouveau rapport**.
-2. **Fichier > Enregistrer sous** : `powerbi/MavenToys_Pilotage.pbix`.
+2. **Fichier > Enregistrer sous** : un fichier d'entraînement hors du dépôt (ex. `Documents/MavenToys_Entrainement.pbix`), pour ne pas écraser le projet fourni.
 3. **Fichier > Options et paramètres > Options > Fichier actif > Chargement des données** :
    - décocher **Date/heure automatique** (Auto date/time) ;
    - décocher **Détecter automatiquement les nouvelles relations** (Autodetect new relationships).
@@ -92,6 +111,8 @@ Pour chaque fichier du dossier [`powerbi/power-query/`](../powerbi/power-query) 
 | Ventes | Pas de colonne `Sale_ID`, pas d'erreur dans `Date` |
 
 Si une icône d'erreur apparaît : vérifier que `DossierDonnees` se termine bien par `\`.
+
+**Leçon tirée de la construction** : la première version du calendrier renvoyait « Identificateur non valide ». En M, un nom de colonne contenant un caractère spécial comme `°` doit s'écrire `[#"N° mois"]` et non `[N° mois]`. Les accents (`[Année]`) sont acceptés, les symboles non.
 
 ### 2.3 Créer la table des mesures
 
@@ -202,7 +223,7 @@ Le statut d'une référence ne dépend d'aucun filtre et doit servir de **légen
 1. Icône **Vue Requête DAX** (DAX query view) dans la barre de gauche.
 2. Coller le contenu de [`powerbi/dax/02_mesures.dax`](../powerbi/dax/02_mesures.dax).
 3. **Exécuter** : trois tableaux de contrôle s'affichent dans les résultats.
-4. **Mettre à jour le modèle avec les modifications** (Update model with changes) : les 37 mesures sont ajoutées à `_Mesures`.
+4. **Mettre à jour le modèle avec les modifications** (Update model with changes) : les 62 mesures sont ajoutées à `_Mesures`.
 
 **Pourquoi la vue Requête DAX ?** Elle permet de tester des mesures **avant** de les ajouter au modèle, puis de toutes les créer d'un clic. C'est aussi l'outil de débogage d'un analyste.
 
@@ -219,20 +240,22 @@ Un ratio se calcule toujours à partir des totaux (et non en moyennant des taux)
 
 **`Écart marge brute vs N-1`** : alimente le graphique en cascade. Il répond directement à la question « d'où vient la variation de la marge ? ».
 
+**`Écart marge brute (10 plus fortes baisses)`** : `RANKX ( ALLSELECTED ( Produits[Produit] ), ... )` classe les produits et renvoie un vide au-delà du 10e. Le visuel masque les lignes vides : on obtient un top 10 sans filtre caché, et la logique est lisible dans le modèle.
+
 ### 5.3 Formats et dossiers d'affichage
 
 **Vue Modèle** > sélectionner plusieurs mesures avec **Ctrl + clic** > volet **Propriétés** :
 
 | Format | Mesures |
 |---|---|
-| Devise, symbole `$ Anglais (États-Unis)`, 0 décimale | CA, Coût des ventes, Marge brute, CA N-1, Marge brute N-1, Écart marge brute vs N-1, CA moyen par magasin, CA moyen par jour, Valeur du stock, Valeur stock immobilisé, CA potentiel perdu sur 30 j |
-| Devise, 2 décimales | CA moyen par vente, CA potentiel perdu par jour |
-| Pourcentage, 1 décimale | Taux de marge, Taux de marge N-1, Évol. CA %, Évol. marge brute %, Évol. unités %, % références en rupture, % stock immobilisé |
+| Devise, symbole `$ Anglais (États-Unis)`, 0 décimale | CA, Coût des ventes, Marge brute, CA N-1, Marge brute N-1, Écart marge brute vs N-1, CA moyen par magasin, CA moyen par jour, Valeur du stock, Valeur stock immobilisé, CA potentiel perdu sur 30 j, Écart marge brute (10 plus fortes baisses), CA (10 premières villes) |
+| Devise, 2 décimales | CA moyen par vente, CA potentiel perdu par jour, CA perdu par jour (10 premiers produits) |
+| Pourcentage, 1 décimale | Taux de marge, Taux de marge N-1, Évol. CA %, Évol. CA % (hors lancements), Évol. marge brute %, Évol. unités %, % références en rupture, % stock immobilisé |
 | Nombre entier, séparateur de milliers | Unités vendues, Unités vendues N-1, Nb ventes, Nb magasins actifs, Stock disponible (unités), Nb références, Nb ruptures, Nb références critiques |
 | Nombre décimal, 1 décimale | Écart taux de marge (pts), Couverture moyenne (jours) |
 | Date courte | Date de référence stock |
 
-Dans le même volet, renseigner **Dossier d'affichage** : `1. Ventes`, `2. Comparaison N-1`, `3. Libellés`, `4. Stock` (en suivant les sections du fichier).
+Dans le même volet, renseigner **Dossier d'affichage** : `1. Ventes et rentabilité`, `2. Comparaison N-1`, `3. Libellés et couleurs`, `4. Stock`, `5. Classements` (en suivant les sections du fichier). Les mesures de libellés et de couleurs sont du texte : pas de format à définir.
 
 **Pourquoi ?** Un chiffre mal formaté (« 0,28 » au lieu de « 27,8 % », « 14444572,35 » au lieu de « 14 444 572 $ ») est l'erreur la plus visible d'un rapport. Les dossiers rendent le modèle lisible par un collègue.
 
@@ -250,8 +273,9 @@ Dans le même volet, renseigner **Dossier d'affichage** : `1. Ventes`, `2. Compa
 |---|---|
 | Arts créatifs, Électronique, Jeux, Jouets, Sports & plein air | Couleurs 1 à 5 du thème, dans cet ordre (ordre alphabétique par défaut) |
 | Année analysée (N) | Bleu `#2A78D6` |
-| Année précédente (N-1) | Gris `#C3C2B7` |
-| Hausse / baisse (cascade) | Vert `#0CA30C` / Rouge `#D03B3B`, total en bleu `#2A78D6` |
+| Année précédente (N-1) | Gris `#C3C2B7` en barres, gris foncé `#898781` en pointillés sur les courbes |
+| Élément mis en évidence / autres éléments | Bleu `#2A78D6` / bleu clair `#B7D3F6` |
+| Hausse / baisse (cascade, évolutions) | Vert `#0CA30C` (texte `#006300`) / Rouge `#D03B3B`, total en bleu `#2A78D6` |
 | Rupture, Critique, Normal, Surstock, Stock dormant | `#D03B3B`, `#EC835A`, `#C3C2B7`, `#FAB219`, `#52514E` |
 
 **Pourquoi ?** Une couleur doit toujours désigner la même chose d'un visuel à l'autre. Le rouge est réservé aux signaux négatifs : on ne l'utilise pas pour une catégorie.
@@ -288,18 +312,19 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 
 | Visuel | Configuration | Pourquoi |
 |---|---|---|
-| **Zone de texte** titre | « Maven Toys : pilotage de la performance » | Le lecteur sait où il est |
-| **Segment** Année | Champ `Calendrier[Année]`, style **Vignette**, **Sélection unique** activée, sélectionner **2023** | Les mesures N-1 exigent une seule année |
+| **Zone de texte** titre | « Maven Toys : pilotage de la performance » + sous-titre « N vs N-1 à période égale, données au 30/09/2023 » | Le lecteur sait où il est et de quand datent les chiffres |
+| **Navigateur de pages** | **Insérer > Boutons > Navigateur > Navigateur de pages**. Format : bouton actif rempli en bleu foncé `#1C5CAB`, texte blanc ; boutons inactifs blancs à contour gris | La page courante se repère d'un coup d'œil |
+| **Segment** Année | Champ `Calendrier[Année]`, style **Liste déroulante**, **Sélection unique** activée, sélectionner **2023** | Les mesures N-1 exigent une seule année |
 | **Segments** Catégorie, Type d'emplacement | Style **Liste déroulante** | Filtres secondaires, peu encombrants |
-| **4 cartes** (visuel **Carte**) | Valeurs : `CA`, `Marge brute`, `Taux de marge`, `Unités vendues`. **Format > Étiquettes de référence > Ajouter** : `Libellé évol. CA` (et équivalents) | Le chiffre seul ne dit rien : c'est l'évolution qui informe |
-| **Graphique en courbes** « Le CA 2023 dépasse 2022 chaque mois » | Axe X : `Calendrier[Mois]`. Axe Y : `CA`, `CA N-1` | Compare deux années sur les mêmes mois, saisonnalité neutralisée |
-| **Graphique en cascade** « Électronique : seule catégorie qui détruit de la marge » | Catégorie : `Produits[Catégorie]`. Y : `Écart marge brute vs N-1`. Trier par catégorie | Montre la contribution de chaque catégorie à la variation totale |
-| **Graphique à barres groupées** « Le taux de marge baisse dans 4 catégories sur 5 » | Axe Y : `Produits[Catégorie]`. Axe X : `Taux de marge N-1`, `Taux de marge` | Montre que la baisse de rentabilité est généralisée |
-| **Zone de texte** « Constats clés » | 3 phrases issues de [04_resultats_recommandations.md](04_resultats_recommandations.md) | Le rapport raconte une histoire, pas seulement des chiffres |
+| **4 cartes KPI** (2 cartes empilées chacune) | Carte 1 : `CA` (police 24, unités d'affichage « Aucune »), titre gris en 11 pt. Carte 2 : `Libellé évol. CA`, couleur du texte **fx > Valeur du champ** : `Couleur évol. CA` (idem pour marge, taux, unités) | Hiérarchie en 3 niveaux : intitulé discret, valeur dominante, évolution colorée (vert = hausse, rouge = baisse) |
+| **Graphique en courbes** | Axe X : `Calendrier[Mois]`. Axe Y : `CA`, `CA N-1`. N en bleu 3 px avec marqueurs, N-1 en gris **pointillé**. Axe des valeurs en milliers. Titre **fx** : `Titre CA mensuel` | L'année analysée ressort, l'année de référence reste en retrait |
+| **Graphique en cascade** | Catégorie : `Produits[Catégorie]`. Y : `Écart marge brute vs N-1`. Tri décroissant. Hausse verte, baisse rouge, total bleu. Titre **fx** : `Titre cascade marge` | Montre la contribution de chaque catégorie à la variation totale |
+| **Graphique à barres groupées** | Axe Y : `Produits[Catégorie]`. Axe X : `Taux de marge N-1` (gris), `Taux de marge` (bleu). Titre **fx** : `Titre taux de marge` | Montre que la baisse de rentabilité est généralisée |
+| **Zone de texte** « À retenir » | 3 constats et 1 priorité, chiffres clés en **gras** | Le lecteur retient le message en 10 secondes |
 
-**Astuce cartes** : si l'option *Étiquettes de référence* n'apparaît pas, vérifier que vous utilisez le visuel **Carte** récent (et non « Carte à plusieurs lignes »). À défaut, placer une deuxième carte plus petite contenant la mesure `Libellé évol. CA` sous la première.
+**Pourquoi deux cartes empilées ?** Les *Étiquettes de référence* du visuel **Carte** récent donnent un résultat proche dans un seul visuel. Les cartes empilées sont plus simples à maintenir et permettent de colorer l'évolution indépendamment de la valeur.
 
-**Conseil titres** : les titres affirmatifs ci-dessus sont valables pour 2023. Si l'utilisateur change de filtre, ils peuvent devenir faux. Alternative neutre : « CA mensuel : N vs N-1 ». Choisissez selon l'usage : rapport de présentation (affirmatif) ou outil de pilotage (neutre).
+**Titres dynamiques (bouton fx du titre).** Un titre affirmatif comme « Le CA dépasse l'année précédente chaque mois » n'est vrai que pour 2023, toutes catégories. Les mesures `Titre ...` renvoient ce message quand `Vue par défaut` est vraie, et un titre neutre (« CA mensuel : N vs N-1 ») dès qu'un filtre change le contexte. **Format > Général > Titre > fx > Valeur du champ**. Résultat : le rapport raconte une histoire sans jamais afficher une affirmation fausse.
 
 ### Page 2 : Produits (répond à Q2)
 
@@ -308,7 +333,7 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 | Titre + navigation                                   [Année] [Catégorie] |
 +-------------------------------------+------------------------------------+
 |  Nuage de points : CA vs taux de    |  Barres : 10 plus fortes baisses   |
-|  marge par produit (+ lignes moy.)  |  de marge brute vs N-1             |
+|  marge par produit                  |  de marge brute vs N-1             |
 +-------------------------------------+------------------------------------+
 |  Table : détail par produit (CA, évol., marge, écart, taux)              |
 +--------------------------------------------------------------------------+
@@ -316,9 +341,9 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 
 | Visuel | Configuration | Pourquoi |
 |---|---|---|
-| **Nuage de points** « Positionnement des produits : volume vs rentabilité » | Valeurs : `Produits[Produit]`. X : `CA`. Y : `Taux de marge`. Info-bulles : `Évol. CA %`, `Marge brute`. Volet **Analytique** (loupe) : **Ligne moyenne** sur X et sur Y | Les lignes moyennes créent 4 quadrants : produits « stars » (CA et marge élevés), « à rentabiliser » (CA élevé, marge faible), etc. |
-| **Graphique à barres** « Produits qui ont le plus fait reculer la marge » | Axe Y : `Produits[Produit]`. X : `Écart marge brute vs N-1`. Volet Filtres > `Produit` > **N premiers** > **Bas 10** par `Écart marge brute vs N-1` | Identifie immédiatement Colorbuds |
-| **Table** « Détail par produit » | `Produit`, `Catégorie`, `CA`, `Évol. CA %`, `Marge brute`, `Écart marge brute vs N-1`, `Taux de marge`. **Mise en forme conditionnelle** : `Évol. CA %` > Couleur de police > Valeur du champ > `Couleur évol. CA` ; `Écart marge brute vs N-1` > **Barres de données** (positif vert, négatif rouge) | Donne le détail chiffré pour ceux qui veulent vérifier |
+| **Nuage de points** « Les produits à fort CA ont souvent une marge faible » | Valeurs : `Produits[Produit]`. X : `CA` (en milliers). Y : `Taux de marge`. Info-bulles : `Évol. CA %`, `Marge brute`. Étiquettes de catégorie en 8 pt | Montre d'un coup d'œil les produits à volume élevé mais peu rentables (Lego Bricks, Magic Sand). Option : **Analytique > Ligne moyenne** sur X et Y pour créer 4 quadrants |
+| **Graphique à barres** | Axe Y : `Produits[Produit]`. X : `Écart marge brute (10 plus fortes baisses)`, en rouge. Tri croissant. Axe des valeurs masqué (les étiquettes suffisent). Titre **fx** : `Titre baisses de marge` | Identifie immédiatement Colorbuds |
+| **Table** « Détail par produit » | `Produit`, `Catégorie`, `CA`, `Évol. CA % (hors lancements)` (renommée « Évol. CA % »), `Marge brute`, `Écart marge brute vs N-1`, `Taux de marge`. Couleur de police **fx** : `Couleur évol. CA` et `Couleur écart marge`. En-têtes sur fond gris clair, largeurs de colonnes fixées pour occuper toute la largeur | Détail chiffré lisible. L'évolution est masquée pour les produits lancés en 2022 (base N-1 inférieure à 25 % du CA) : un « +24 825 % » n'aide pas à décider. Des barres de données ont été testées puis écartées : elles masquaient les montants |
 
 ### Page 3 : Magasins (répond à Q3)
 
@@ -329,16 +354,18 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 |  Barres : CA moyen par magasin      |  Colonnes : CA moyen par jour      |
 |  selon le type d'emplacement        |  selon le jour de la semaine       |
 +-------------------------------------+------------------------------------+
-|  Matrice : emplacement > magasin    |  Barres : top 10 villes par CA     |
+|  Table : magasins par évolution     |  Barres : top 10 villes par CA     |
 +-------------------------------------+------------------------------------+
 ```
 
 | Visuel | Configuration | Pourquoi |
 |---|---|---|
-| **Graphique à barres** « Un magasin d'aéroport rapporte 1,5 fois plus » | Axe Y : `Magasins[Type d'emplacement]`. X : `CA moyen par magasin`. Info-bulles : `Nb magasins actifs`, `Évol. CA %` | Corrige le biais de taille : le centre-ville pèse 57 % du CA car il compte 29 magasins |
-| **Histogramme** « Vendredi et samedi : pics d'activité » | Axe X : `Calendrier[Jour semaine]`. Y : `CA moyen par jour` | Utile pour planifier le personnel et les livraisons |
-| **Matrice** « Performance des magasins » | Lignes : `Type d'emplacement` puis `Magasin`. Valeurs : `CA`, `Évol. CA %`, `Marge brute`, `Taux de marge`. Couleur de police conditionnelle sur `Évol. CA %` | Permet de descendre au magasin et de repérer les 3 en recul |
-| **Graphique à barres** « Top 10 villes » | Axe Y : `Magasins[Ville]`. X : `CA`. Filtre **N premiers : Haut 10** | Vision géographique sans carte (les cartes nécessitent des services en ligne parfois bloqués) |
+| **Graphique à barres** | Axe Y : `Magasins[Type d'emplacement]`. X : `CA moyen par magasin`. Info-bulles : `Nb magasins actifs`, `Évol. CA %`. Couleur **fx** : `Couleur meilleur emplacement`. Titre **fx** : `Titre emplacements` | Corrige le biais de taille (le centre-ville pèse 57 % du CA car il compte 29 magasins). Seule la meilleure barre est en bleu soutenu : l'œil va directement au message |
+| **Histogramme** | Axe X : `Calendrier[Jour semaine]`. Y : `CA moyen par jour`. Couleur **fx** : `Couleur jours les plus forts`. Titre **fx** : `Titre jours` | Utile pour planifier le personnel et les livraisons |
+| **Table** « Magasins classés par évolution du CA » | `Magasin`, `Type d'emplacement`, `CA`, `Évol. CA %`, `Taux de marge`. Tri croissant sur `Évol. CA %`. Couleur de police **fx** : `Couleur évol. CA` | Les 3 magasins en recul apparaissent en tête, en rouge |
+| **Graphique à barres** « Top 10 des villes par CA » | Axe Y : `Magasins[Ville]`. X : `CA (10 premières villes)`. Tri décroissant. Couleur **fx** : `Couleur 3 premières villes` | Vision géographique sans carte (les cartes nécessitent des services en ligne parfois bloqués) |
+
+**Mises en évidence calculées.** Colorer « Aéroport » en dur serait faux dès qu'un filtre change le classement. Les mesures `Couleur ...` utilisent `MAXX` ou `RANKX` sur `ALLSELECTED` : la barre mise en évidence est toujours la meilleure **du contexte filtré**. **Format > Barres > Couleur > fx > Valeur du champ**.
 
 ### Page 4 : Stocks (répond à Q4)
 
@@ -358,16 +385,16 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 |---|---|---|
 | **Zone de texte** | « Photo du stock au 30/09/2023. Demande estimée sur les 90 derniers jours. » | Le lecteur doit connaître la date et la méthode |
 | **Segments** | `Produits[Catégorie]`, `Magasins[Type d'emplacement]`, `Stock[Statut stock]`. **Pas de segment Année** | Le stock est une photo : un filtre de date n'aurait aucun effet et induirait en erreur |
-| **4 cartes** | `Valeur du stock` ; `Nb ruptures` (référence : `% références en rupture`) ; `CA potentiel perdu sur 30 j` ; `Valeur stock immobilisé` (référence : `% stock immobilisé`) | Traduit le problème de stock en argent, langage de la direction |
-| **Barres empilées 100 %** « Part des références par statut » | Axe Y : `Produits[Catégorie]`. X : `Nb références`. Légende : `Stock[Statut stock]` (couleurs de statut de l'étape 6) | Compare le niveau de risque entre catégories |
-| **Graphique à barres** « Ruptures les plus coûteuses » | Axe Y : `Produits[Produit]`. X : `CA potentiel perdu par jour`. Filtre N premiers : Haut 10 | Priorise le réapprovisionnement par impact financier |
-| **Table** « Références à traiter en priorité » | `Magasin`, `Produit`, `Stock disponible`, `Ventes moy. par jour`, `Couverture (jours)`, `Statut stock`. Filtre du visuel : `Statut stock` = Rupture, Critique (< 7 j). Tri : `Ventes moy. par jour` décroissant | Liste opérationnelle directement exploitable par les achats |
+| **4 cartes KPI** (cartes empilées) | `Valeur du stock` (noir) + `Libellé valeur du stock` ; `Nb ruptures` (rouge) + `Libellé ruptures` ; `CA potentiel perdu sur 30 j` (rouge) + `Libellé CA perdu` ; `Valeur stock immobilisé` (ambre foncé) + `Libellé stock immobilisé` | Traduit le problème de stock en argent. La couleur de la valeur signale la gravité : rouge pour une perte, ambre pour un capital à libérer |
+| **Barres empilées 100 %** | Axe Y : `Produits[Catégorie]`. X : `Nb références`. Légende : `Stock[Statut stock]` (couleurs de statut de l'étape 6). Titre **fx** : `Titre statuts stock` | Compare le niveau de risque entre catégories |
+| **Graphique à barres** « Les ruptures les plus coûteuses » | Axe Y : `Produits[Produit]`. X : `CA perdu par jour (10 premiers produits)`, en rouge. Tri décroissant | Priorise le réapprovisionnement par impact financier |
+| **Table** « Références à traiter en priorité » | `Magasin`, `Produit`, `Statut stock`, `Stock disponible`, `Ventes moy. par jour`, `Couverture (jours)`, `CA potentiel perdu par jour`. Filtre du visuel : `Statut stock` = Rupture, Critique (< 7 j). Tri : `CA potentiel perdu par jour` décroissant. Couleur de police **fx** du statut : `Couleur statut stock` | Liste opérationnelle : les lignes les plus urgentes en tête, le statut repérable en rouge ou orange |
 
 ---
 
 ## Étape 8 : Finitions (20 min)
 
-1. **Navigation** : **Insérer > Boutons > Navigateur > Navigateur de pages**. Placer en haut de la page 1, copier-coller sur les autres pages. *Pourquoi : un utilisateur métier ne pense pas à cliquer sur les onglets.*
+1. **Navigation** : **Insérer > Boutons > Navigateur > Navigateur de pages**. Placer en haut de la page 1, copier-coller sur les autres pages. Dans Power BI Desktop, les boutons s'activent avec **Ctrl + clic** (clic simple dans Power BI Service). *Pourquoi : un utilisateur métier ne pense pas à cliquer sur les onglets.*
 2. **Interactions** : sur la page Synthèse, sélectionner le segment Année > **Format > Modifier les interactions**. Vérifier que tous les visuels sont filtrés. *Pourquoi : maîtriser quel visuel filtre quel autre.*
 3. **Info-bulles** : sur chaque graphique, ajouter `Évol. CA %` ou `Taux de marge` dans le champ **Info-bulles**. *Pourquoi : enrichir sans surcharger.*
 4. **Textes alternatifs** : **Format > Général > Texte de remplacement** sur les graphiques principaux. *Pourquoi : accessibilité, attendue dans de nombreuses entreprises.*
@@ -380,43 +407,50 @@ Renommer les pages (double-clic sur l'onglet) : `Synthèse`, `Produits`, `Magasi
 
 Comparer le rapport aux valeurs du script Python. **Tout écart doit être expliqué avant publication.**
 
-| Contrôle (Année 2023, aucun autre filtre) | Valeur attendue |
-|---|---|
-| CA | 6 962 074 $ |
-| CA N-1 | 5 320 116 $ |
-| Évol. CA % | +30,9 % |
-| Marge brute | 1 824 242 $ |
-| Évol. marge brute % | +16,0 % |
-| Taux de marge | 26,2 % |
-| Écart taux de marge | -3,3 pts |
-| Unités vendues | 541 073 |
-| Écart marge brute Électronique | -210 260 $ |
-| Écart marge brute Arts créatifs | +335 745 $ |
-| Nb ruptures (page Stocks, sans filtre) | 77 |
-| Valeur du stock | 300 210 $ |
-| CA potentiel perdu sur 30 j | 29 069 $ |
-| Valeur stock immobilisé | 49 246 $ |
+| Contrôle (Année 2023, aucun autre filtre) | Valeur Python | Valeur Power BI | Statut |
+|---|---:|---:|:---:|
+| CA | 6 962 074,27 $ | 6 962 074,27 $ | ✅ |
+| CA N-1 | 5 320 115,85 $ | 5 320 115,85 $ | ✅ |
+| Évol. CA % | +30,9 % | +30,9 % | ✅ |
+| Marge brute | 1 824 242 $ | 1 824 242 $ | ✅ |
+| Évol. marge brute % | +16,0 % | +16,0 % | ✅ |
+| Taux de marge | 26,2 % | 26,2 % | ✅ |
+| Écart taux de marge | -3,3 pts | -3,3 pts | ✅ |
+| Unités vendues | 541 073 | 541 073 | ✅ |
+| Écart marge brute Électronique | -210 260 $ | -210 260 $ | ✅ |
+| Écart marge brute Arts créatifs | +335 745 $ | +335 745 $ | ✅ |
+| CA moyen par magasin d'aéroport | 213 156 $ | 213 156 $ | ✅ |
+| Nb ruptures (page Stocks, sans filtre) | 77 | 77 | ✅ |
+| Valeur du stock | 300 209,58 $ | 300 209,58 $ | ✅ |
+| CA potentiel perdu sur 30 j | 29 069 $ | 29 069 $ | ✅ |
+| Valeur stock immobilisé | 49 246,17 $ | 49 246,17 $ | ✅ |
 
-Tester aussi les cas limites :
+Cas limites testés :
 
-- Année **2022** sélectionnée : les évolutions affichent « Pas de période N-1 comparable » (comportement attendu, pas d'erreur).
-- Catégorie **Électronique** filtrée : le nombre de ruptures passe à **4**.
+| Cas | Comportement attendu | Statut |
+|---|---|:---:|
+| Année **2022** sélectionnée | Les évolutions affichent « Pas de période N-1 comparable », sans erreur | ✅ |
+| Catégorie **Électronique** filtrée (page Stocks, dans l'interface) | Tous les visuels réagissent : 4 ruptures, 27 critiques, stock 30 706 $ | ✅ |
+| Catégorie **Électronique** filtrée (page Synthèse, dans l'interface) | CA 806 312 $ (-27,8 %) en rouge, titres neutres (« CA mensuel : N vs N-1 ») | ✅ |
+| Top 10 des baisses de marge | Jenga (11e, -1 309 $) est exclu, Dinosaur Figures (10e) inclus | ✅ |
+| Magic Sand dans le détail produits | Évolution masquée (base N-1 de 3 486 $ pour 868 849 $ de CA) | ✅ |
+| 62 mesures évaluées dans 5 contextes de filtre | Aucune erreur DAX | ✅ |
+| 4 pages affichées | Aucun message d'erreur de visuel | ✅ |
+
+Les contrôles Power BI ont été exécutés par requêtes DAX sur le modèle chargé (mêmes requêtes qu'en bas de `02_mesures.dax`), complétés par des tests de filtres dans l'interface. Au total, **19 indicateurs** ont été comparés automatiquement au calcul Python : 19 identiques.
 
 ---
 
 ## Étape 10 : Captures et versionnage (10 min)
 
-1. Pour chaque page, **Win + Maj + S** (outil Capture d'écran Windows), enregistrer dans `docs/images/` :
-   `01_synthese.png`, `02_produits.png`, `03_magasins.png`, `04_stocks.png`.
-2. **Enregistrer** le `.pbix`.
-3. Dans IntelliJ (**Commit**, Ctrl + K) ou dans le terminal :
+Les captures du rapport final sont déjà dans `docs/images/` : `01_synthese.png`, `02_produits.png`, `03_magasins.png`, `04_stocks.png`.
 
-```bash
-git add powerbi/MavenToys_Pilotage.pbix docs/images
-```
+Si vous modifiez le rapport :
 
-```bash
-git commit -m "Ajout du rapport Power BI et des captures"
-```
+1. Replier les volets **Visualisations** et **Données** pour agrandir la page, puis **Win + Maj + S** pour capturer chaque page.
+2. **Fichier > Enregistrer** : Power BI met à jour les fichiers texte du dossier `powerbi/`.
+3. Relire les changements dans IntelliJ (**Commit**, Ctrl + K) : chaque visuel modifié apparaît comme un fichier JSON modifié.
 
-**Pourquoi versionner le `.pbix` ?** Le recruteur doit pouvoir télécharger et ouvrir le rapport. Les fichiers `.pq` et `.dax` gardent en parallèle une version lisible de la logique, consultable directement sur GitHub.
+Le fichier `.pbi/cache.abf` (données en cache) est exclu par le `.gitignore` : les données restent dans `data/raw/`, le dépôt ne stocke que la logique.
+
+**Source de vérité.** Le modèle `MavenToys_Pilotage.SemanticModel/` fait foi. Les fichiers `power-query/*.pq` et `dax/*.dax` en sont une version commentée, pratique à lire sur GitHub : si vous modifiez une mesure dans Power BI, reportez la modification dans `02_mesures.dax` pour garder les deux alignés.

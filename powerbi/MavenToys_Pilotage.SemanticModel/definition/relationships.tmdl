@@ -1,0 +1,20 @@
+relationship dc60cee3-c0c8-50cc-8119-8777e8e3e18e
+	fromColumn: Ventes.Date
+	toColumn: Calendrier.Date
+
+relationship 2c6377a6-d107-5114-b4b2-3c564a9465a3
+	fromColumn: Ventes.'ID produit'
+	toColumn: Produits.'ID produit'
+
+relationship f0f95499-ef98-5301-b310-814ac46bb8e5
+	fromColumn: Ventes.'ID magasin'
+	toColumn: Magasins.'ID magasin'
+
+relationship 38fb1648-0e4f-5212-9bd2-98b88a235c3f
+	fromColumn: Stock.'ID produit'
+	toColumn: Produits.'ID produit'
+
+relationship 2cffa21a-d3ac-5e66-9a7a-7af0cfcc2bec
+	fromColumn: Stock.'ID magasin'
+	toColumn: Magasins.'ID magasin'
+

@@ -48,20 +48,22 @@ Le taux de marge baisse dans 4 catégories sur 5 (seule Sports & plein air progr
 
 ### 4. Les aéroports sont les magasins les plus productifs
 
-| Type d'emplacement | Magasins | Part du CA | CA moyen par magasin | Évol. CA |
-|---|---:|---:|---:|---:|
-| Aéroport | 3 | 8,9 % | **429 908 $** | **+37,5 %** |
-| Centre-ville | 29 | 56,9 % | 283 434 $ | +33,4 % |
-| Quartier résidentiel | 6 | 11,5 % | 276 019 $ | +24,8 % |
-| Zone commerciale | 12 | 22,7 % | 273 262 $ | +25,2 % |
+Janvier-septembre 2023 :
 
-Le centre-ville domine en volume uniquement parce qu'il concentre 29 magasins. **Par magasin, un aéroport génère 1,5 fois plus de CA** et croît le plus vite.
+| Type d'emplacement | Magasins | Part du CA | CA moyen par magasin | Évol. CA vs N-1 |
+|---|---:|---:|---:|---:|
+| Aéroport | 3 | 9,2 % | **213 156 $** | **+37,5 %** |
+| Centre-ville | 29 | 57,3 % | 137 670 $ | +33,4 % |
+| Quartier résidentiel | 6 | 11,2 % | 129 653 $ | +24,8 % |
+| Zone commerciale | 12 | 22,3 % | 129 356 $ | +25,2 % |
+
+Le centre-ville domine en volume uniquement parce qu'il concentre 29 magasins. **Par magasin, un aéroport génère 1,5 fois plus de CA** qu'un magasin de centre-ville et croît le plus vite. Le constat est identique sur toute la période (430 000 $ par magasin d'aéroport contre 283 000 $).
 
 47 magasins sur 50 progressent. Trois reculent : **Monterrey 1** (-16,6 %), **Guadalajara 4** (-4,2 %) et **Aguascalientes 1** (-2,6 %).
 
 ### 5. Une activité concentrée en fin de semaine et en décembre
 
-- Vendredi et samedi génèrent environ **30 000 $ par jour**, contre 17 000 $ le lundi (x 1,8).
+- En 2023, le samedi génère en moyenne **35 764 $ par jour** et le vendredi 34 682 $, contre 19 172 $ le lundi (x 1,9).
 - Décembre 2022 a pesé **1,5 fois un mois moyen** : le 4e trimestre 2023 sera décisif.
 
 ### 6. Les stocks sont mal répartis : ruptures d'un côté, capital immobilisé de l'autre
@@ -103,6 +105,7 @@ Photo au 30/09/2023, demande estimée sur les 90 derniers jours :
 - **41 couples magasin x produit vendus mais absents de l'inventaire** : leur risque de rupture n'est pas mesuré.
 - **Marge brute uniquement** : pas de loyers, salaires ou frais logistiques, donc pas de rentabilité nette par magasin.
 - **Seuils (7 et 90 jours) fixés par hypothèse** : à valider avec la supply chain selon les délais réels de réapprovisionnement.
+- **Évolutions en % trompeuses pour les produits lancés en 2022** (ex. Magic Sand : +24 825 %, sa base de janvier-septembre 2022 étant quasi nulle) : l'écart de marge en valeur est l'indicateur de référence.
 
 ## Pistes d'amélioration
 
@@ -110,5 +113,5 @@ Photo au 30/09/2023, demande estimée sur les 90 derniers jours :
 - **Page d'analyse du lancement de produits** (courbe des ventes depuis la première vente).
 - **Segmentation ABC** des produits (20 % des produits qui font 80 % de la marge).
 - **Publication sur Power BI Service** avec actualisation planifiée et sécurité par ligne (RLS) : chaque directeur de magasin ne voit que son magasin.
-- **Format PBIP** (projet Power BI en fichiers texte) pour suivre chaque modification du rapport dans Git.
+- **Intégration continue** : valider automatiquement le modèle TMDL et le rapport PBIR à chaque commit (GitHub Actions), et comparer les KPI au script Python de référence.
 - **Alimentation depuis une base SQL** plutôt que des CSV, pour se rapprocher d'un environnement d'entreprise.
