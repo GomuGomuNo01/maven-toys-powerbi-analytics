@@ -198,6 +198,22 @@ Rapport prêt à l'emploi : [télécharger `MavenToys_Pilotage.pbix`](https://gi
 | Tableaux lisibles | En-têtes marqués, colonnes réparties sur toute la largeur, évolutions non significatives masquées, tri par urgence |
 | Accessibilité | Palette testée pour le daltonisme, textes alternatifs sur les graphiques |
 
+### Le rapport en action
+
+Trois séquences enregistrées dans Power BI Desktop, sur les données réelles du projet.
+
+**Navigation entre les pages.** Les boutons en haut du rapport mènent aux 4 pages, et le bouton de la page courante reste mis en évidence.
+
+![Navigation entre les 4 pages du rapport](docs/images/demo-navigation.gif)
+
+**Filtrage par catégorie.** En sélectionnant Électronique, les KPI passent au rouge (CA 806 312 $, soit -27,8 %), les constats du bloc « À retenir » se recalculent et les titres affirmatifs laissent place à des titres neutres, pour ne jamais afficher une affirmation fausse.
+
+![Filtrage sur la catégorie Électronique](docs/images/demo-filtrage.gif)
+
+**Filtrage croisé.** Un clic sur la barre « Aéroport » filtre tous les autres visuels de la page : jours de la semaine, classement des magasins et top des villes.
+
+![Filtrage croisé depuis un graphique](docs/images/demo-filtre-croise.gif)
+
 ### Synthèse : comment évolue la performance ?
 
 Cartes KPI avec évolution vs N-1, CA mensuel N vs N-1, cascade de l'écart de marge par catégorie, taux de marge par catégorie et tableau « À retenir » dont les constats sont recalculés pour chaque sélection (capture en haut de page).
