@@ -13,8 +13,6 @@ Analyse de 829 262 ventes d'une enseigne de 50 magasins de jouets pour répondre
 
 *Fichier unique qui s'ouvre directement dans Power BI Desktop, données incluses, sans configuration. Toutes les versions : [Releases](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases).*
 
-![Page Synthèse du rapport Power BI](docs/images/01_synthese.png)
-
 ---
 
 ## En bref
@@ -27,6 +25,10 @@ Analyse de 829 262 ventes d'une enseigne de 50 magasins de jouets pour répondre
 | **Impact chiffré** | **29 069 $** de CA perdu par mois à cause des ruptures, **49 246 $** de stock immobilisé |
 | **Fiabilité** | 19 indicateurs comparés automatiquement entre Power BI et un calcul Python indépendant : **0 écart** |
 | **Compétences** | Cadrage métier, audit qualité, Power Query, modélisation en étoile, DAX (time intelligence), data storytelling, versionnage Git d'un projet Power BI |
+
+![Le rapport Power BI en fonctionnement : navigation entre les 4 pages](docs/images/demo-navigation.gif)
+
+*Le rapport en fonctionnement : navigation entre les 4 pages. Deux autres séquences (filtrage et filtrage croisé) sont présentées dans la [section 7](#7-le-rapport-power-bi).*
 
 ---
 
@@ -200,11 +202,7 @@ Rapport prêt à l'emploi : [télécharger `MavenToys_Pilotage.pbix`](https://gi
 
 ### Le rapport en action
 
-Trois séquences enregistrées dans Power BI Desktop, sur les données réelles du projet.
-
-**Navigation entre les pages.** Les boutons en haut du rapport mènent aux 4 pages, et le bouton de la page courante reste mis en évidence.
-
-![Navigation entre les 4 pages du rapport](docs/images/demo-navigation.gif)
+Séquences enregistrées dans Power BI Desktop, sur les données réelles du projet. La navigation entre les 4 pages est présentée en haut de page.
 
 **Filtrage par catégorie.** En sélectionnant Électronique, les KPI passent au rouge (CA 806 312 $, soit -27,8 %), les constats du bloc « À retenir » se recalculent et les titres affirmatifs laissent place à des titres neutres, pour ne jamais afficher une affirmation fausse.
 
@@ -216,7 +214,9 @@ Trois séquences enregistrées dans Power BI Desktop, sur les données réelles 
 
 ### Synthèse : comment évolue la performance ?
 
-Cartes KPI avec évolution vs N-1, CA mensuel N vs N-1, cascade de l'écart de marge par catégorie, taux de marge par catégorie et tableau « À retenir » dont les constats sont recalculés pour chaque sélection (capture en haut de page).
+![Page Synthèse](docs/images/01_synthese.png)
+
+Cartes KPI avec évolution vs N-1, CA mensuel N vs N-1, cascade de l'écart de marge par catégorie, taux de marge par catégorie et tableau « À retenir » dont les constats sont recalculés pour chaque sélection.
 
 ### Produits : quels produits font varier la marge ?
 
