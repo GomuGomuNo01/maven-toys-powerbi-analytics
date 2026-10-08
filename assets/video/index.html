@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maven Toys Analytics : présentation vidéo</title>
+  <meta name="description" content="Le projet Power BI Maven Toys en 40 secondes : la question posée, la chaîne de traitement, le rapport en action et les constats chiffrés.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%230A1628'/><rect x='22' y='54' width='12' height='26' rx='3' fill='%23388BE2'/><rect x='40' y='38' width='12' height='42' rx='3' fill='%23F2C811'/><rect x='58' y='48' width='12' height='32' rx='3' fill='%23388BE2'/><rect x='76' y='26' width='12' height='54' rx='3' fill='%23FF6B35'/></svg>">
+  <style>
+    :root {
+      --bg: #0A1628;
+      --surface: #132A45;
+      --line: #2A4C70;
+      --text: #FFFFFF;
+      --muted: #90A5BE;
+      --accent: #F2C811;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 25%, rgba(56, 139, 226, 0.18), transparent 62%), var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+    header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+    .logo {
+      width: 46px; height: 46px; border-radius: 10px; background: var(--surface);
+      border: 1px solid var(--line);
+      display: flex; align-items: flex-end; justify-content: center; gap: 3px; padding: 8px 7px;
+    }
+    .logo i { display: block; width: 5px; border-radius: 2px; }
+    .logo i:nth-child(1) { height: 12px; background: #388BE2; }
+    .logo i:nth-child(2) { height: 22px; background: var(--accent); }
+    .logo i:nth-child(3) { height: 16px; background: #388BE2; }
+    .logo i:nth-child(4) { height: 28px; background: #FF6B35; }
+    h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); margin: 0; letter-spacing: -0.5px; }
+    p.lead { color: var(--muted); margin: 0 0 28px; text-align: center; max-width: 760px; }
+    .player {
+      width: 100%; max-width: 1100px;
+      border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+      background: #000; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    }
+    video { display: block; width: 100%; height: auto; }
+    nav { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+    nav a {
+      color: var(--text); text-decoration: none; padding: 12px 22px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--surface); font-weight: 600;
+    }
+    nav a.primary { background: var(--accent); border-color: var(--accent); color: #141A26; }
+    nav a:hover, nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    p.note { color: var(--muted); font-size: 0.92rem; margin-top: 26px; text-align: center; max-width: 760px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <h1>Maven Toys Analytics en 40 secondes</h1>
+  </header>
+  <p class="lead">Analyser 829 262 ventes pour répondre à une question de direction : la croissance est-elle rentable, et où agir en priorité ?</p>
+
+  <div class="player">
+    <video controls playsinline preload="metadata" poster="presentation-poster.jpg">
+      <source src="MavenToys_presentation.mp4" type="video/mp4">
+      Votre navigateur ne lit pas cette vidéo : <a href="MavenToys_presentation.mp4">la télécharger</a>.
+    </video>
+  </div>
+
+  <nav>
+    <a class="primary" href="https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases/latest/download/MavenToys_Pilotage.pbix">Télécharger le rapport .pbix</a>
+    <a href="https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics">Voir le projet sur GitHub</a>
+  </nav>
+
+  <p class="note">Vidéo animée image par image en Python (Pillow), sur une musique synthétisée
+  spécialement pour elle et calée sur chaque changement de scène : aucun droit à céder.</p>
+</body>
+</html>
