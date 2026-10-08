@@ -10,8 +10,13 @@
 Analyse de 829 262 ventes d'une enseigne de 50 magasins de jouets pour répondre à une question de direction : **la croissance est-elle rentable, et où agir en priorité avant la fin d'année ?**
 
 [![Télécharger le rapport Power BI](https://img.shields.io/badge/T%C3%A9l%C3%A9charger%20le%20rapport-.pbix%20avec%20donn%C3%A9es-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases/latest/download/MavenToys_Pilotage.pbix)
+[![Voir la présentation](https://img.shields.io/badge/Voir%20la%20pr%C3%A9sentation-vid%C3%A9o%20de%2040%20s-FF6B35?style=for-the-badge)](https://gomugomuno01.github.io/maven-toys-powerbi-analytics/presentation/)
 
-*Fichier unique qui s'ouvre directement dans Power BI Desktop, données incluses, sans configuration. Toutes les versions : [Releases](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases).*
+*Rapport : un fichier unique qui s'ouvre directement dans Power BI Desktop, données incluses, sans configuration ; toutes les versions sont dans les [Releases](https://github.com/GomuGomuNo01/maven-toys-powerbi-analytics/releases). Présentation : le projet, sa chaîne de traitement et ses résultats en 40 secondes, sur une musique originale.*
+
+[![Présentation vidéo du projet Maven Toys, 40 secondes](assets/video/presentation-poster.jpg)](https://gomugomuno01.github.io/maven-toys-powerbi-analytics/presentation/)
+
+*La présentation vidéo (40 s, 1080p, avec le son) : cliquer sur l'image pour la regarder dans la page « Présentation » publiée sur GitHub Pages. Elle déroule la question posée par la direction, la chaîne de traitement du fichier brut au rapport, les quatre pages en action, puis les constats chiffrés. Elle a été animée image par image en Python ; sa musique a été synthétisée spécialement pour elle et calée sur chaque changement de scène, sans aucun droit à céder.*
 
 ---
 
@@ -324,6 +329,9 @@ Analyse complète : [docs/04_resultats_recommandations.md](docs/04_resultats_rec
 
 ```text
 maven-toys-powerbi-analytics/
+├── .github/workflows/
+│   └── deploy-pages.yml                   Publie la page de présentation sur GitHub Pages
+├── assets/video/                          Présentation vidéo (MP4), son affiche et sa page web
 ├── data/raw/                              Données sources (CSV) et dictionnaire des données
 ├── analysis/
 │   ├── audit_donnees.py                   Audit qualité et valeurs de référence
@@ -369,4 +377,4 @@ python analysis/audit_donnees.py
 
 **Données** : jeu de données **Mexico Toy Sales** publié par [Maven Analytics](https://mavenanalytics.io/data-playground) (données fictives, mises à disposition à des fins pédagogiques). Les données restent la propriété de leur éditeur.
 
-**Licence** : code, modèle Power BI et documentation sous licence [MIT](LICENSE).
+**Licence** : code, modèle Power BI et documentation sous licence [MIT](LICENSE). La vidéo de présentation et sa musique ont été produites pour ce projet (animation Python, synthèse sonore) et relèvent de la même licence : aucun contenu tiers soumis à droits n'y est utilisé.
